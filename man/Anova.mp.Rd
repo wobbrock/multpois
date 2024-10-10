@@ -4,7 +4,7 @@
 \alias{Anova.mp}
 \title{Get ANOVA-style results for a multinomial-Poisson model}
 \usage{
-Anova.mp(model, type = c(3, 2, "III", "II"))
+\method{Anova}{mp}(model, type = c(3, 2, "III", "II"))
 }
 \arguments{
 \item{model}{A model built by \code{\link{glm.mp}} or \code{\link{glmer.mp}}. The underlying model is
