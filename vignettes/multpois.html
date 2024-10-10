@@ -12,7 +12,7 @@
 
 <meta name="author" content="Jacob O. Wobbrock" />
 
-<meta name="date" content="2024-10-09" />
+<meta name="date" content="2024-10-10" />
 
 <title>Analyzing nominal responses via the multinomial-Poisson trick</title>
 
@@ -341,7 +341,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">Analyzing nominal responses via the
 multinomial-Poisson trick</h1>
 <h4 class="author">Jacob O. Wobbrock</h4>
-<h4 class="date">2024-10-09</h4>
+<h4 class="date">2024-10-10</h4>
 
 
 
@@ -573,22 +573,17 @@ to its <code>family=binomial</code> option, but it does not.
 Fortunately, we can analyze polytomous response data for (only)
 between-subjects factors using the <code>multinom</code> function from
 the <code>nnet</code> package:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>m3 <span class="ot">=</span> <span class="fu">multinom</span>(Y <span class="sc">~</span> X1<span class="sc">*</span>X2, <span class="at">data=</span>bs3)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; # weights:  15 (8 variable)</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; initial  value 65.916737 </span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; iter  10 value 55.621011</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; final  value 55.603822 </span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; converged</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="fu">Anova</span>(m3, <span class="at">type=</span><span class="dv">3</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; Analysis of Deviance Table (Type III tests)</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; Response: Y</span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt;       LR Chisq Df Pr(&gt;Chisq)  </span></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#&gt; X1      3.5327  2    0.17096  </span></span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co">#&gt; X2      7.8081  2    0.02016 *</span></span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#&gt; X1:X2   4.0039  2    0.13507  </span></span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>m3 <span class="ot">=</span> <span class="fu">multinom</span>(Y <span class="sc">~</span> X1<span class="sc">*</span>X2, <span class="at">data=</span>bs3, <span class="at">trace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="fu">Anova</span>(m3, <span class="at">type=</span><span class="dv">3</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; Analysis of Deviance Table (Type III tests)</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; Response: Y</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;       LR Chisq Df Pr(&gt;Chisq)  </span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; X1      3.5327  2    0.17096  </span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; X2      7.8081  2    0.02016 *</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; X1:X2   4.0039  2    0.13507  </span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</span></span></code></pre></div>
 <p>Unfortunately, <code>emmeans</code> does not work straightforwardly
 with <code>multinom</code> models. A solution to this issue from Russ
 Lenth, lead author of <code>emmeans</code>, was <a href="https://stackoverflow.com/questions/33316898/r-tukey-posthoc-tests-for-nnet-multinom-multinomial-fit-to-test-for-overall-dif">posted

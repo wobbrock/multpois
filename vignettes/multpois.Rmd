@@ -190,7 +190,7 @@ response data for (only) between-subjects factors using the `multinom` function 
 package:
 
 ```{r message=FALSE, warning=FALSE}
-m3 = multinom(Y ~ X1*X2, data=bs3)
+m3 = multinom(Y ~ X1*X2, data=bs3, trace=FALSE)
 Anova(m3, type=3)
 ```
 
