@@ -78,7 +78,7 @@
 #' contrasts(bs3$X1) <- "contr.sum"
 #' contrasts(bs3$X2) <- "contr.sum"
 #'
-#' m3 = multinom(Y ~ X1*X2, data=bs3)
+#' m3 = multinom(Y ~ X1*X2, data=bs3, trace=FALSE)
 #' Anova(m3, type=3)
 #' e0 = emmeans(m3, ~ X1*X2 | Y, mode="latent")
 #' c0 = contrast(e0, method="pairwise", ref=1)

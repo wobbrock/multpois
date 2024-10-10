@@ -74,7 +74,7 @@
 #' contrasts(bs3$X1) <- "contr.sum"
 #' contrasts(bs3$X2) <- "contr.sum"
 #'
-#' m3 = multinom(Y ~ X1*X2, data=bs3)
+#' m3 = multinom(Y ~ X1*X2, data=bs3, trace=FALSE)
 #' Anova(m3, type=3)
 #'
 #' m4 = glm.mp(Y ~ X1*X2, data=bs3) # compare
