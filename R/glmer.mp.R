@@ -82,7 +82,7 @@
 #' m3 = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws3)
 #' Anova.mp(m3, type=3)
 #'
-#' @export
+#' @export glmer.mp
 glmer.mp <- function(formula, data)
 {
   # ensure there is only one D.V.

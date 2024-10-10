@@ -77,7 +77,7 @@
 #' m2 = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws3)
 #' Anova.mp(m2, type=3)
 #'
-#' @export
+#' @export Anova.mp
 Anova.mp <- function(model, type=c(3, 2, "III", "II"))
 {
   # ensure the model is of class "glm" or "glmerMod"

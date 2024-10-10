@@ -88,7 +88,7 @@
 #' Anova.mp(m4, type=3)
 #' glm.mp.con(m4, pairwise ~ X1*X2, adjust="holm") # compare
 #'
-#' @export
+#' @export glm.mp.con
 glm.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bonferroni","BH","BY","fdr","none"))
 {
   # require the pairwise keyword

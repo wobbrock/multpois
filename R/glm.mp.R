@@ -80,7 +80,7 @@
 #' m4 = glm.mp(Y ~ X1*X2, data=bs3) # compare
 #' Anova.mp(m4, type=3)
 #'
-#' @export
+#' @export glm.mp
 glm.mp <- function(formula, data)
 {
   # ensure there is only one D.V.
