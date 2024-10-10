@@ -1,6 +1,5 @@
 Package: multpois
-Title: Multinomial and Mixed Multinomial Analyses of Variance via the
-    Multinomial-Poisson Trick
+Title: Analyze Nominal Responses via the Multinomial-Poisson Trick
 Version: 0.0.0.9100
 Authors@R: 
     person("Jacob O.", "Wobbrock", 
