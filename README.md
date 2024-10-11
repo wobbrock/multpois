@@ -1,2 +1,2 @@
 # multpois
-R package for analyzing nominal responses using the multinomial-Poisson trick
+R package for analyzing nominal responses using the multinomial-Poisson trick. Although glm and lme4::glmer have a family=binomial option for dichotomous outcomes, they do not offer a family=multinomial option for polytomous outcomes. For purely between-subjects data, nnet:multinom meets this need, but in the case of repeated measures, there is no straightforward option. This package provides the equivalent to a family=multinomial option for glm and lme4::glmer.
