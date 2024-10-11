@@ -9,12 +9,12 @@
 #'
 #' @description
 #' This function uses the multinomial-Poisson trick to analyze \strong{nominal response} data using a Poisson
-#' generalized linear mixed model (GLMM). The nominal response should have two or more unordered categories. At
-#' least one independent variable should be a within-subjects factor and there should be a subject identifier
-#' to account for repeated measures.
+#' generalized linear mixed model (GLMM). The nominal response should have two or more unordered categories.
+#' The independent variables should have at least one within-subjects factor or numeric predictor. There also
+#' should be a repeated subject identifier to account for repeated measures.
 #'
-#' @param formula A formula object in the style of, e.g., \code{Y ~ X1*X2 + (1|PId)}, where \code{X1} and \code{X2}
-#' are factors and \code{PId} is a subject identifier. The response \code{Y} must
+#' @param formula A formula object in the style of, e.g., \code{Y ~ X1*X2 + (1|PId)}, where \code{X1} and
+#' \code{X2} are factors or predictors and \code{PId} is a subject identifier. The response \code{Y} must
 #' be a nominal variable, i.e., of type \code{factor}. See the \code{formula} entry for
 #' \code{\link[lme4]{glmer}}.
 #'
@@ -24,8 +24,11 @@
 #' of \emph{subclass} \code{glmerMod}. See the return value for \code{\link[lme4]{glmer}}.
 #'
 #' @details
-#' This function should be used for nominal response data with repeated measures. For data with only
-#' between-subjects factors, use \code{\link{glm.mp}} or \code{\link[nnet]{multinom}}.
+#' This function should be used for nominal response data with repeated measures. In essence, it provides
+#' for the equivalent of \code{\link[lme4]{glmer}} with \code{family=multinomial}, were that option to
+#' exist. (It does not.)
+#'
+#' For data with only between-subjects factors, use \code{\link{glm.mp}} or \code{\link[nnet]{multinom}}.
 #'
 #' Users wishing to verify the correctness of \code{glmer.mp} should compare its \code{\link{Anova.mp}}
 #' results to \code{\link[car]{Anova}} results for models built with \code{\link[lme4]{glmer}} using
@@ -95,9 +98,8 @@ glmer.mp <- function(formula, data)
   DV = formula[[2]] # D.V.
 
   # ensure D.V. is nominal
-  dvtype = as.list(class(data[[DV]]))
-  if (any(dvtype != "factor")) {
-    stop("glmer.mp is only valid for nominal dependent variables. ", DV, " is of type ", paste0(unlist(dvtype), collapse =", "), ".")
+  if (!is.factor(data[[DV]])) {
+    stop("glmer.mp is only valid for nominal dependent variables (i.e., factors).\n\t", DV, " is of type ", class(data[[DV]]))
   }
 
   # get the independent variables from the formula

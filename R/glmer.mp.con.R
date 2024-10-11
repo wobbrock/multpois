@@ -29,7 +29,7 @@
 #' relevant to each pairwise comparison.
 #'
 #' Users wishing to verify the correctness of \code{glmer.mp.con} should compare its results to
-#' \code{\link[emmeans]{emmeans}} results for models built with \code{\link[stats]{glmer}} using
+#' \code{\link[emmeans]{emmeans}} results for models built with \code{\link[lme4]{glmer}} using
 #' \code{family=binomial} for dichotomous responses. In general, the results should be very similar.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
@@ -118,11 +118,28 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
     stop("glmer.mp.con requires a model with a random factor, e.g., (1|S) or (X|S).")
   }
 
-  # get our contrast formula terms and I.V.s
+  # get our contrast formula I.V.s
   t = terms(formula)
   IVs = as.list(attr(t, "variables"))[c(-1,-2)]
 
-  # build our new factor name and values
+  # ensure all contrast I.V.s were in the original model formula
+  if (!any(IVs %in% iv0)) {
+    stop("glmer.mp.con requires formula terms to be present in the model.")
+  }
+
+  # warn if any contrast formula I.V.s are not factors
+  ivnotfac = plyr::laply(IVs, function(term) !is.factor(df[[term]]))
+  if (any(ivnotfac)) {
+    snf = ""
+    for (i in 1:length(ivnotfac)) {
+      if (ivnotfac[i]) {
+        snf = paste0(snf, '\n\t', IVs[[i]], " is of type ", class(df[[ IVs[[i]] ]]))
+      }
+    }
+    warning("glmer.mp.con makes little sense for terms that are not factors:", snf, immediate.=TRUE)
+  }
+
+  # build our new composite factor name and column values
   facname = IVs[[1]]
   facvals = df[[ IVs[[1]] ]]
   if (length(IVs) > 1) {
