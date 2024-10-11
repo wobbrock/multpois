@@ -34,7 +34,7 @@ but not using this function; rather, the multinomial-Poisson trick is used on th
 relevant to each pairwise comparison.
 
 Users wishing to verify the correctness of \code{glmer.mp.con} should compare its results to
-\code{\link[emmeans]{emmeans}} results for models built with \code{\link[stats]{glmer}} using
+\code{\link[emmeans]{emmeans}} results for models built with \code{\link[lme4]{glmer}} using
 \code{family=binomial} for dichotomous responses. In general, the results should be very similar.
 }
 \examples{

@@ -8,8 +8,8 @@ glm.mp(formula, data)
 }
 \arguments{
 \item{formula}{A formula object in the style of, e.g., \code{Y ~ X1*X2}, where \code{X1} and \code{X2}
-are factors. The response \code{Y} must be a nominal variable, i.e., of type \code{factor}. See
-the \code{formula} entry for \code{\link[stats]{glm}}.}
+are factors or predictors. The response \code{Y} must be a nominal variable, i.e., of type \code{factor}.
+See the \code{formula} entry for \code{\link[stats]{glm}}.}
 
 \item{data}{A data frame in long-format. See the \code{data} entry for \code{\link[stats]{glm}}.}
 }
@@ -20,17 +20,20 @@ A Poisson regression model of type \code{\link[stats]{glm}}. See the return valu
 \description{
 This function uses the multinomial-Poisson trick to analyze \strong{nominal response} data using a Poisson
 generalized linear model (GLM). The nominal response should have two or more unordered categories. The
-independent variables should be between-subjects factors.
+independent variables should be between-subjects factors or numeric predictors.
 }
 \details{
-This function should be used for nominal response data with only between-subjects factors. For data
-with repeated measures, use \code{\link{glmer.mp}}, which can take random factors and thus
-handle correlated responses.
+This function should be used for nominal response data with only between-subjects factors or predictors.
+In essence, it provides for the equivalent of \code{\link[stats]{glm}} with \code{family=multinomial},
+were that option to exist. (It does not, but \code{\link[nnet]{multinom}} serves this purpose.)
 
-Users wishing to verify the correctness of \code{glm.mp} should compare its \code{\link{Anova.mp}} results to
-\code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using \code{family=binomial}
-(for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous responses). In general, the
-results should be very close or match.
+For data with repeated measures, use \code{\link{glmer.mp}}, which can take random factors and thus handle
+correlated responses.
+
+Users wishing to verify the correctness of \code{glm.mp} should compare its \code{\link{Anova.mp}} results
+to \code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using
+\code{family=binomial} (for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous
+responses). In general, the results should be very close or match.
 }
 \examples{
 library(car)
