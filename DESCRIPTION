@@ -2,29 +2,29 @@ Package: multpois
 Title: Analyze Nominal Responses via the Multinomial-Poisson Trick
 Version: 0.0.0.9200
 Authors@R: 
-    person("Jacob O.", "Wobbrock", 
-           role = c("aut", "cre"),
-           email = "wobbrock@uw.edu", 
+    person("Jacob O.", "Wobbrock", , "wobbrock@uw.edu", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3675-5491"))
 Maintainer: Jacob O. Wobbrock <wobbrock@uw.edu>
 Description: Dichotomous responses with two categories can be analyzed
-    with 'glm' or 'lme4::glmer' using the 'family=binomial' parameter.
+    with 'glm' or 'lme4::glmer' using the 'family=binomial' option.
     Unfortunately, polytomous responses with three or more unordered
     categories cannot be analyzed similarly because there is no
     'family=multinomial' option. For between-subjects data,
-    'nnet::multinom' can be used in place of 'glm', but this function
-    cannot take random factors and therefore cannot handle within-subjects
-    data (i.e., repeated measures). To address this issue, this package
-    implements the multinomial-Poisson trick (Baker 1994, Chen & Kuo 2001,
-    Guimaraes 2004, Lee et al. 2017), which transforms nominal response
-    data into counts for each categorical alternative. These counts are
-    then analyzed using 'glm' with 'family=poisson' for between-subjects
-    data or 'lme4::glmer' with 'family=poisson' for within-subjects data.
-    Omnibus analysis of variance results can be obtained along with post
-    hoc pairwise comparisons.
+    'nnet::multinom' addresses this need, but it cannot handle random
+    factors and therefore cannot handle repeated measures. To address this
+    issue, this package implements the multinomial-Poisson trick (Baker
+    1994, Chen & Kuo 2001, Guimaraes 2004, Lee et al. 2017), which
+    transforms nominal response data into counts for each categorical
+    alternative. These counts are then analyzed using 'glm' with
+    'family=poisson' for between-subjects data, or 'lme4::glmer' with
+    'family=poisson' for within-subjects data.  Omnibus analysis of
+    variance results can be obtained along with post hoc pairwise
+    comparisons.
 License: GPL (>= 2)
-Language: en-US
-VignetteBuilder: knitr
+URL: https://github.com/wobbrock/multpois/
+BugReports: https://github.com/wobbrock/multpois/issues/new
+Depends: 
+    R (>= 2.10)
 Imports:
     car (>= 3.1.2),
     dfidx (>= 0.0.5),
@@ -34,13 +34,14 @@ Imports:
     plyr (>= 1.8.9)
 Suggests:
     emmeans (>= 1.10.3),
-    nnet (>= 7.3.19),
-    testthat (>= 3.2.1.1),
     knitr (>= 1.48),
-    rmarkdown
+    nnet (>= 7.3.19),
+    rmarkdown,
+    testthat (>= 3.2.1.1)
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
+Language: en-US
+LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Depends: 
-    R (>= 2.10)
-LazyData: true
