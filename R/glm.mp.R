@@ -86,14 +86,17 @@
 #' @export glm.mp
 glm.mp <- function(formula, data)
 {
-  # ensure there is only one D.V.
+  # ensure there is some D.V.
   t = terms(formula)
   if (attr(t, "response") != 1) {
-    stop("glm.mp is only valid for one dependent variable. You have ", attr(t, "response"), ".")
+    stop("glm.mp requires a formula with a dependent variable on the left-hand side.")
   }
 
-  # get the one D.V.
-  DV = formula[[2]] # D.V.
+  # ensure there is only one D.V.
+  DV = all.vars(formula[[2]])
+  if (length(DV) != 1) {
+    stop("glm.mp is only valid for one dependent variable. You have ", length(DV), ".")
+  }
 
   # ensure D.V. is nominal
   if (!is.factor(data[[DV]])) {

@@ -127,7 +127,7 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
     stop("glmer.mp.con requires formula terms to be present in the model.")
   }
 
-  # warn if any contrast formula I.V.s are not factors
+  # ensure all contrast formula I.V.s are factors
   ivnotfac = plyr::laply(IVs, function(term) !is.factor(df[[term]]))
   if (any(ivnotfac)) {
     snf = ""
@@ -136,7 +136,7 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
         snf = paste0(snf, '\n\t', IVs[[i]], " is of type ", class(df[[ IVs[[i]] ]]))
       }
     }
-    warning("glmer.mp.con makes little sense for terms that are not factors:", snf, immediate.=TRUE)
+    stop("glmer.mp.con requires formula terms to be factors:", snf)
   }
 
   # build our new composite factor name and column values
