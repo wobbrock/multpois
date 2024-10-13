@@ -1,10 +1,10 @@
 ---
-title: "Analyzing nominal responses via the multinomial-Poisson trick"
+title: "Analyzing nominal responses using the multinomial-Poisson trick"
 author: "Jacob O. Wobbrock"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Analyzing nominal responses via the multinomial-Poisson trick}
+  %\VignetteIndexEntry{Analyzing nominal responses using the multinomial-Poisson trick}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,18 +21,17 @@ knitr::opts_chunk$set(
 This vignette shows how to use the `multpois` package for analyzing nominal response data.
 Nominal responses, sometimes called multinomial responses, are unordered categories. In 
 certain experiments or surveys, the dependent variable can be one of *N* categories. For example,
-we might ask people what their favorite ice cream flavor is: vanilla, chocolate, strawberry, or
-other. This four-category response would be a polytomous dependent variable. Perhaps
-we wish to ask adults and children about their favorite ice cream to see if there is a difference by
-age group. We would then have a two-level between-subjects factor. If we ask each respondent only once, 
-this data set would represent a one-way between-subjects design. But perhaps we ask each participant 
-once *each season*&mdash;in fall, winter, spring, and summer&mdash;to see if their responses change. Now 
-we would have a four-level within-subjects factor, i.e., repeated measures. 
+we might ask people what their favorite ice cream flavor is: vanilla, chocolate, or strawberry. This four-category response would be a polytomous dependent variable. Perhaps we wish to ask adults and 
+children about their favorite ice cream to see if there is a difference by age group. We would then 
+have a two-level between-subjects factor. If we ask each respondent only once, this data set would 
+represent a one-way between-subjects design. But perhaps we ask each participant once 
+*each season*&mdash;in fall, winter, spring, and summer&mdash;to see if their responses change. 
+Now we would have a four-level within-subjects factor, i.e., repeated measures. 
 
-The `multpois` package helps us analyze this type of data, where the dependent variable is nominal. It does 
-so by modeling nominal responses as counts of category choices and uses (mixed) Poisson regression 
-to analyze these counts (Baker 1994, Chen &amp; Kuo 2001). This technique is known as the  
-multinomial-Poisson transformation (Guimaraes 2004) or trick (Lee et al. 2017).
+The `multpois` package helps us analyze this type of data, where the dependent variable is nominal. 
+It does so by modeling nominal responses as counts of category choices and uses (mixed) Poisson 
+regression to analyze these counts (Baker 1994, Chen &amp; Kuo 2001). This technique is known as 
+the multinomial-Poisson transformation (Guimaraes 2004) or trick (Lee et al. 2017).
 
 R already provides options for the following situations:
 
@@ -316,11 +315,11 @@ This fifth and final example is also the reason that the `multpois` package was 
 a polytomous response, one between-subjects factor, and one within-subjects factors. This mixed factorial
 design is also known as a split-plot design. 
 
-This fictional data is based on the scenario at the beginning of this vignette. Eighty respondents, half
+This fictional data is based on the scenario at the beginning of this vignette. Forty respondents, half
 adults and half children, were surveyed for their favorite ice cream four times, once per season. Thus, 
 `Age` is a between-subjects factor with two levels `{adult, child}` and `Season` is a within-subjects factor 
-with four levels `{fall, winter, spring, summer}`. The polytomous response, `Pref`, has four categories: 
-`{vanilla, chocolate, strawberry, other}`. The `PId` factor is repeated across rows, indicating
+with four levels `{fall, winter, spring, summer}`. The polytomous response, `Pref`, has three categories: 
+`{vanilla, chocolate, strawberry}`. The `PId` factor is repeated across rows, indicating
 respondents were queried four times each.
 
 Let's load and prepare this data set:
@@ -337,9 +336,9 @@ contrasts(icecream$Season) <- "contr.sum"
 
 Let's visualize this data set using a mosaic plot:
 
-```{r fig.cap="**Figure 5.** Proportions of `chocolate` (brown), `other` (gray), `strawberry` (pink), and `vanilla` (beige) responses in eight conditions: `{adult, fall}`, `{adult, spring}`, `{adult, sumer}`, `{adult, winter}`, `{child, fall}`, `{child, spring}`, `{child, summer}`, and `{child, winter}`.", fig.height=6, fig.width=7}
+```{r fig.cap="**Figure 5.** Proportions of `chocolate` (brown), `strawberry` (pink), and `vanilla` (beige) responses in eight conditions: `{adult, fall}`, `{adult, spring}`, `{adult, summer}`, `{adult, winter}`, `{child, fall}`, `{child, spring}`, `{child, summer}`, and `{child, winter}`.", fig.height=6, fig.width=7}
 xt = xtabs( ~ Age + Season + Pref, data=icecream)
-mosaicplot(xt, main="Pref by Age, Season", las=2, col=c("tan","gray","pink","beige"))
+mosaicplot(xt, main="Pref by Age, Season", las=1, col=c("tan","pink","beige"))
 ```
 
 As in the previous example, we can use the multinomial-Poisson trick to analyze repeated measures
@@ -350,43 +349,47 @@ m8 = glmer.mp(Pref ~ Age*Season + (1|PId), data=icecream)
 Anova.mp(m8, type=3)
 ```
 
-We have a main effect of `Season` and an `Age&times;Season` interaction but no main effect of `Age`. We 
+We have a main effect of `Age` and an `Age`&times;`Season` interaction but no main effect of `Season`. We 
 can explore this further by graphically depicting response proportions in each age group:
 
-```{r fig.cap="**Figure 6.** Proportions of `chocolate` (brown), `other` (gray), `strawberry` (pink), and `vanilla` (beige) responses for adults and children. Although the proportions differ, they are similar, illustrating the non-significant effect of `Age`.", fig.height=6, fig.width=7}
+```{r fig.cap="**Figure 6.** Proportions of `chocolate` (brown), `strawberry` (pink), and `vanilla` (beige) responses for adults and children. The main effect of `Age` emerges, with children preferring chocolate more and strawberry less than adults.", fig.height=6, fig.width=7}
 xt = xtabs( ~ Age + Pref, data=icecream)
-mosaicplot(xt, main="Pref by Age", las=1, col=c("tan","gray","pink","beige"))
+mosaicplot(xt, main="Pref by Age", las=1, col=c("tan","pink","beige"))
 ```
 
-For completeness, let's also graphically depict the main effect of `Season`:
+The different proportions by `Age` clearly emerge, explaining the main effect. Let's also graphically depict the proportions by `Season`:
 
-```{r fig.cap="**Figure 7.** Proportions of `chocolate` (brown), `other` (gray), `strawberry` (pink), and `vanilla` (beige) responses for each of four seasons. The differences in response proportions across seasons clearly emerge, illustrating the significant effect of `Season`. Fall and winter are clearly the season for chocolate, spring for strawberry, and vanilla is always in style!", fig.height=6, fig.width=7}
+```{r fig.cap="**Figure 7.** Proportions of `chocolate` (brown), `strawberry` (pink), and `vanilla` (beige) responses by season. Although there are some differences in proportion, they are not quite statistically significant (*p* = 0.053).", fig.height=6, fig.width=7}
 xt = xtabs( ~ Season + Pref, data=icecream)
-mosaicplot(xt, main="Pref by Season", las=1, col=c("tan","gray","pink","beige"))
+mosaicplot(xt, main="Pref by Season", las=1, col=c("tan","pink","beige"))
 ```
 
 Finally, we can again conduct *post hoc* pairwise comparisons. Note, however, there are many such possible 
 comparisons, and best practice would require us to only conduct those comparisons driven by hypotheses or 
 planned in advance. For example, we might wish to limit our pairwise comparisons to adults vs. children 
-*in each season*, not across seasons. In any case, we conduct all pairwise comparisons below simply for 
+*in each season*, not across all seasons. In any case, we first conduct all pairwise comparisons for 
 illustration:
 
 ```{r message=FALSE, warning=FALSE}
 glmer.mp.con(m8, pairwise ~ Age*Season, adjust="holm")
 ```
 
-If we did wish to compare adults vs. children in each season (fall, winter, spring, summer), we would 
-conduct all pairwise comparisons, leaving them *uncorrected*, extract the relevant ones 
-(rows 4, 22, 11, 17, respectively), and manually correct their *p*-values, like so:
+If we *did* wish to compare adults *vs.* children in each season (fall, winter, spring, and summer), we would 
+first conduct all pairwise comparisons, leaving them *uncorrected*...
 
 ```{r message=FALSE, warning=FALSE}
 glmer.mp.con(m8, pairwise ~ Age*Season, adjust="none")
-p.adjust(c(0.005673, 0.107523, 0.042385, 0.007731), method="holm")
 ```
 
-Thus, after Type I error correction using Holm's sequential Bonferroni procedure 
-[(Holm 1979)](http://www.jstor.org/stable/4615733), we see adults vs. children in 
-fall and summer are significantly different (*p* < .05). Looking again at Figure 5 visually
+...and then we would extract the relevant comparisons (rows 4, 22, 11, and 17, respectively), and manually correct their *p*-values to guard against Type I errors, like so:
+
+```{r}
+p.adjust(c(0.017176, 0.308026, 0.001020, 0.363038), method="holm")
+```
+
+Thus, after correction using Holm's sequential Bonferroni procedure 
+[(Holm 1979)](https://www.jstor.org/stable/4615733), we see that adults *vs.* children in 
+**spring** are significantly different (*p* < .05). Looking again at Figure 5 visually
 confirms this result.
 
 
