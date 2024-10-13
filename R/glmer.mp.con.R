@@ -9,13 +9,14 @@
 #'
 #' @description
 #' This function conducts \emph{post hoc} pairwise comparisons on generalized linear mixed models (GLMMs)
-#' built with \code{\link{glmer.mp}}. Such models have \strong{nominal response} types.
+#' built with \code{\link{glmer.mp}}. Such models have \strong{nominal response} types, i.e., \code{factor}s
+#' with unordered categories.
 #'
 #' @param model A multinomial-Poisson generalized linear mixed model created by \code{\link{glmer.mp}}.
 #'
 #' @param formula A formula object in the style of, e.g., \code{pairwise ~ X1*X2}, where \code{X1} and
-#' \code{X2} are factors in \code{model}. The \code{pairwise} keyword must be used on the left hand side of
-#' the formula. See the \code{specs} entry for \code{\link[emmeans]{emmeans}}.
+#' \code{X2} are factors in \code{model}. The \code{pairwise} keyword \strong{must} be used on the left-hand
+#' side of the formula. See the \code{specs} entry for \code{\link[emmeans]{emmeans}}.
 #'
 #' @param adjust A string indicating the \emph{p}-value adjustment to use. Defaults to \code{"holm"}. See the
 #' Details section for \code{\link[stats]{p.adjust}}.
@@ -23,17 +24,22 @@
 #' @returns Pairwise comparisons for all levels indicated by the factors in \code{formula}.
 #'
 #' @details
-#' \emph{Post hoc} pairwise comparisons should be conducted only after a statistically significant omnibus
-#' test using \code{\link{Anova.mp}}. Comparisons are conducted in the style of \code{\link[emmeans]{emmeans}}
-#' but not using this function; rather, the multinomial-Poisson trick is used on the subset of the data
-#' relevant to each pairwise comparison.
+#' \emph{Post hoc} pairwise comparisons should be conducted \emph{only} after a statistically significant
+#' omnibus test using \code{\link{Anova.mp}}. Comparisons are conducted in the style of
+#' \code{\link[emmeans]{emmeans}} but not using this function; rather, the multinomial-Poisson trick is used
+#' on a subset of the data relevant to each pairwise comparison.
 #'
 #' Users wishing to verify the correctness of \code{glmer.mp.con} should compare its results to
 #' \code{\link[emmeans]{emmeans}} results for models built with \code{\link[lme4]{glmer}} using
-#' \code{family=binomial} for dichotomous responses. In general, the results should be very similar.
+#' \code{family=binomial} for dichotomous responses. The results should be similar.
+#'
+#' @note It is common to receive \code{boundary (singular) fit} messages. These generally can be ignored
+#' provided the test outputs look sensible. Less commonly, the procedures can fail to converge, which
+#' can happen when counts of one or more categories are very small or zero in some conditions. In such
+#' cases, any results should be regarded with caution.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
-#' \emph{The Statistician 43} (4), pp. 495-504. \url{https://doi.org/10.2307/2348134}
+#' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
 #'
 #' @references Chen, Z. and Kuo, L. (2001). A note on the estimation of the
 #' multinomial logit model with random effects. \emph{The American Statistician
@@ -45,7 +51,9 @@
 #'
 #' @references Lee, J.Y.L., Green, P.J.,and Ryan, L.M. (2017). On the “Poisson
 #' trick” and its extensions for fitting multinomial regression models. \emph{arXiv
-#' preprint} available at \url{https://doi.org/10.48550/arXiv.1707.08538}
+#' preprint} available at \doi{10.48550/arXiv.1707.08538}
+#'
+#' @author Jacob O. Wobbrock
 #'
 #' @seealso [Anova.mp()], [glmer.mp()], [glm.mp()], [glm.mp.con()], [emmeans::emmeans()]
 #'
@@ -86,6 +94,14 @@
 #' m3 = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws3)
 #' Anova.mp(m3, type=3)
 #' glmer.mp.con(m3, pairwise ~ X1*X2, adjust="holm")
+#'
+#' @importFrom stats model.frame
+#' @importFrom stats terms
+#' @importFrom stats contrasts
+#' @importFrom stats 'contrasts<-'
+#' @importFrom stats as.formula
+#' @importFrom stats poisson
+#' @importFrom stats p.adjust
 #'
 #' @export glmer.mp.con
 glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bonferroni","BH","BY","fdr","none"))
@@ -190,7 +206,7 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
       # improve our row
       rownames(a)[1] = paste0(lvls[i], " - ", lvls[j]) # update contrast label
       colnames(a)[3] = "p.value" # simplify p-value label
-      a = dplyr::mutate(a, .after=Df, N=nrow(d0)/length(levels(df$alt))) # insert N
+      a = dplyr::mutate(a, .after="Df", N=nrow(d0)/length(levels(df$alt))) # insert N
 
       # create a new output row entry and add it to our output table
       r = list(Contrast = rownames(a)[1],

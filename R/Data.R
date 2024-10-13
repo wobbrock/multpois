@@ -164,28 +164,29 @@ NULL
 #' Mixed factorial 2&times;2 design with polytomous response
 #'
 #' @description
-#' This synthetic dataset represents a survey of 80 respondents about their favorite
-#' ice cream flavor. Half of the respondents were adults and half were children. They
-#' were queried four times over the course of a year, once in the middle of each season.
+#' This synthetic dataset represents a survey of 40 respondents about their favorite
+#' ice cream flavor. Twenty of the respondents were adults and 20 were children. They
+#' were queried four times over the course of a year, once in the middle of each season
+#' (fall, winter, spring, summer).
 #'
 #' This dataset has a polytomous response \code{Pref} and two factors,
-#' \code{Age} and \code{Season}. The response has the ice cream flavors
+#' \code{Age} and \code{Season}. The response has the unordered categories
 #' \code{\{vanilla, chocolate, strawberry, other\}}. Factor \code{Age} has levels
 #' \code{\{adult, child\}}, and factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
-#' It also has a \code{PId} column for participant identifier. Participant identifiers are repeated
-#' four times across rows, one for each season.
+#' It also has a \code{PId} column for participant identifier. Each participant identifier is repeated
+#' four times, once per season.
 #'
 #' @name icecream
 #' @docType data
-#' @format A data frame with 320 observations on the following 4 variables:
+#' @format A data frame with 160 observations on the following 4 variables:
 #' \describe{
-#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"80"}}
+#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"40"}}
 #'      \item{Age}{a between-subjects factor with levels \code{"adult"}, \code{"child"}}
 #'      \item{Season}{a within-subjects factor with levels \code{"fall"}, \code{"winter"}, \code{"spring"}, \code{"summer"}}
 #'      \item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}, \code{"other"}}
 #' }
 #'
-#' @seealso See vignette("multpois", package="multpois") for a complete analysis of this data set.
+#' @seealso See \code{vignette("multpois", package="multpois")} for a complete analysis of this data set.
 #'
 #' @keywords datasets
 #' @examples
