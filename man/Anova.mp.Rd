@@ -7,10 +7,11 @@
 Anova.mp(model, type = c(3, 2, "III", "II"))
 }
 \arguments{
-\item{model}{A model built by \code{\link{glm.mp}} or \code{\link{glmer.mp}}. The underlying model is
-built by \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}}, both with \code{family=poisson}.}
+\item{model}{A model built by \code{\link{glm.mp}} or \code{\link{glmer.mp}}. (The underlying model
+will have been built by \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}}, with
+\code{family=poisson}.)}
 
-\item{type}{Type \code{type} parameter passed to \code{\link[car]{Anova}}. Default is type 3.}
+\item{type}{The \code{type} parameter passed to \code{\link[car]{Anova}}. The default is type 3.}
 }
 \value{
 An ANOVA-style table of chi-square results for models built by \code{\link{glm.mp}} or
@@ -28,11 +29,14 @@ table with chi-square results.
 Users wishing to verify the correctness of these results can compare \code{\link[car]{Anova}} results
 for dichotomous response models built with \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}} (using
 \code{family=binomial}) to \code{Anova.mp} results for models built with \code{\link{glm.mp}} or
-\code{\link{glmer.mp}}, respectively.
+\code{\link{glmer.mp}}, respectively. The results should generally match, or be very similar.
 
 Users can also compare \code{\link[car]{Anova}} results for polytomous response models built with
 \code{\link[nnet]{multinom}} to \code{Anova.mp} results for models built with \code{\link{glm.mp}}.
-In general, the results should be very close or match.
+Again, the results should generally match, or be very similar.
+
+There is no similarly easy comparison for polytomous response models with repeated measures. The
+lack of options was a key motivation for developing \code{\link{glmer.mp}} in the first place.
 }
 \examples{
 ## between-subjects factors (X1,X2) with polytomous response (Y)
@@ -64,7 +68,7 @@ Anova.mp(m2, type=3)
 }
 \references{
 Baker, S.G. (1994). The multinomial-Poisson transformation.
-\emph{The Statistician 43} (4), pp. 495-504. \url{https://doi.org/10.2307/2348134}
+\emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
 
 Chen, Z. and Kuo, L. (2001). A note on the estimation of the
 multinomial logit model with random effects. \emph{The American Statistician
@@ -76,8 +80,11 @@ transformation. \emph{The Stata Journal 4} (3), pp. 265-273.
 
 Lee, J.Y.L., Green, P.J.,and Ryan, L.M. (2017). On the “Poisson
 trick” and its extensions for fitting multinomial regression models. \emph{arXiv
-preprint} available at \url{https://doi.org/10.48550/arXiv.1707.08538}
+preprint} available at \doi{10.48550/arXiv.1707.08538}
 }
 \seealso{
 \code{\link[=glm.mp]{glm.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[car:Anova]{car::Anova()}}
+}
+\author{
+Jacob O. Wobbrock
 }

@@ -8,32 +8,38 @@ glmer.mp(formula, data)
 }
 \arguments{
 \item{formula}{A formula object in the style of, e.g., \code{Y ~ X1*X2 + (1|PId)}, where \code{X1} and
-\code{X2} are factors or predictors and \code{PId} is a subject identifier. The response \code{Y} must
-be a nominal variable, i.e., of type \code{factor}. See the \code{formula} entry for
-\code{\link[lme4]{glmer}}.}
+\code{X2} are factors or predictors and \code{PId} is a factor serving as a subject identifier. The
+response \code{Y} must be of type \code{factor}. See the \code{formula} entry for \code{\link[lme4]{glmer}}.}
 
 \item{data}{A data frame in long-format. See the \code{data} entry for \code{\link[lme4]{glmer}}.}
 }
 \value{
-A mixed-effects Poisson regression model of type \code{\link[lme4]{merMod}}, more specifically
+A mixed-effects Poisson regression model of type \code{\link[lme4]{merMod}}, specifically
 of \emph{subclass} \code{glmerMod}. See the return value for \code{\link[lme4]{glmer}}.
 }
 \description{
 This function uses the multinomial-Poisson trick to analyze \strong{nominal response} data using a Poisson
-generalized linear mixed model (GLMM). The nominal response should have two or more unordered categories.
-The independent variables should have at least one within-subjects factor or numeric predictor. There also
-should be a repeated subject identifier to account for repeated measures.
+generalized linear mixed model (GLMM). The nominal response should be a factor with two or more unordered
+categories. The independent variables should have at least one within-subjects factor or numeric predictor.
+There also must be a repeated subject identifier to be used as a random factor.
 }
 \details{
 This function should be used for nominal response data with repeated measures. In essence, it provides
 for the equivalent of \code{\link[lme4]{glmer}} with \code{family=multinomial}, were that option to
-exist. (It does not.)
+exist. (That option does not exist, which was a key motivation for developing this function.)
 
-For data with only between-subjects factors, use \code{\link{glm.mp}} or \code{\link[nnet]{multinom}}.
+For polytomous response data with only between-subjects factors, use \code{\link{glm.mp}} or
+\code{\link[nnet]{multinom}}.
 
 Users wishing to verify the correctness of \code{glmer.mp} should compare its \code{\link{Anova.mp}}
 results to \code{\link[car]{Anova}} results for models built with \code{\link[lme4]{glmer}} using
-\code{family=binomial} for dichotomous responses. In general, the results should be very close or match.
+\code{family=binomial} for dichotomous responses. The results should generally match, or be very similar.
+}
+\note{
+It is common to receive a \code{boundary (singular) fit} message. This generally can be ignored
+provided the test output looks sensible. Less commonly, the procedure can fail to converge, which
+can happen when counts of one or more categories are very small or zero in some conditions. In such
+cases, any results should be regarded with caution.
 }
 \examples{
 library(car)
@@ -72,7 +78,7 @@ Anova.mp(m3, type=3)
 }
 \references{
 Baker, S.G. (1994). The multinomial-Poisson transformation.
-\emph{The Statistician 43} (4), pp. 495-504. \url{https://doi.org/10.2307/2348134}
+\emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
 
 Chen, Z. and Kuo, L. (2001). A note on the estimation of the
 multinomial logit model with random effects. \emph{The American Statistician
@@ -84,8 +90,11 @@ transformation. \emph{The Stata Journal 4} (3), pp. 265-273.
 
 Lee, J.Y.L., Green, P.J.,and Ryan, L.M. (2017). On the “Poisson
 trick” and its extensions for fitting multinomial regression models. \emph{arXiv
-preprint} available at \url{https://doi.org/10.48550/arXiv.1707.08538}
+preprint} available at \doi{10.48550/arXiv.1707.08538}
 }
 \seealso{
 \code{\link[=Anova.mp]{Anova.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[=glm.mp]{glm.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[lme4:glmer]{lme4::glmer()}}
+}
+\author{
+Jacob O. Wobbrock
 }

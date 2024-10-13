@@ -8,8 +8,8 @@ glm.mp(formula, data)
 }
 \arguments{
 \item{formula}{A formula object in the style of, e.g., \code{Y ~ X1*X2}, where \code{X1} and \code{X2}
-are factors or predictors. The response \code{Y} must be a nominal variable, i.e., of type \code{factor}.
-See the \code{formula} entry for \code{\link[stats]{glm}}.}
+are factors or predictors. The response \code{Y} must be of type \code{factor}. See the \code{formula}
+entry for \code{\link[stats]{glm}}.}
 
 \item{data}{A data frame in long-format. See the \code{data} entry for \code{\link[stats]{glm}}.}
 }
@@ -19,13 +19,14 @@ A Poisson regression model of type \code{\link[stats]{glm}}. See the return valu
 }
 \description{
 This function uses the multinomial-Poisson trick to analyze \strong{nominal response} data using a Poisson
-generalized linear model (GLM). The nominal response should have two or more unordered categories. The
-independent variables should be between-subjects factors or numeric predictors.
+generalized linear model (GLM). The nominal response should be a factor with two or more unordered
+categories. The independent variables should be between-subjects factors and/or numeric predictors.
 }
 \details{
 This function should be used for nominal response data with only between-subjects factors or predictors.
 In essence, it provides for the equivalent of \code{\link[stats]{glm}} with \code{family=multinomial},
-were that option to exist. (It does not, but \code{\link[nnet]{multinom}} serves this purpose.)
+were that option to exist. (That option does not exist, but \code{\link[nnet]{multinom}} serves the same
+purpose.)
 
 For data with repeated measures, use \code{\link{glmer.mp}}, which can take random factors and thus handle
 correlated responses.
@@ -33,7 +34,7 @@ correlated responses.
 Users wishing to verify the correctness of \code{glm.mp} should compare its \code{\link{Anova.mp}} results
 to \code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using
 \code{family=binomial} (for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous
-responses). In general, the results should be very close or match.
+responses). The results should generally match, or be very similar.
 }
 \examples{
 library(car)
@@ -74,7 +75,7 @@ Anova.mp(m4, type=3)
 }
 \references{
 Baker, S.G. (1994). The multinomial-Poisson transformation.
-\emph{The Statistician 43} (4), pp. 495-504. \url{https://doi.org/10.2307/2348134}
+\emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
 
 Guimaraes, P. (2004). Understanding the multinomial-Poisson
 transformation. \emph{The Stata Journal 4} (3), pp. 265-273.
@@ -82,8 +83,11 @@ transformation. \emph{The Stata Journal 4} (3), pp. 265-273.
 
 Lee, J.Y.L., Green, P.J.,and Ryan, L.M. (2017). On the “Poisson
 trick” and its extensions for fitting multinomial regression models. \emph{arXiv
-preprint} available at \url{https://doi.org/10.48550/arXiv.1707.08538}
+preprint} available at \doi{10.48550/arXiv.1707.08538}
 }
 \seealso{
 \code{\link[=Anova.mp]{Anova.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[nnet:multinom]{nnet::multinom()}}
+}
+\author{
+Jacob O. Wobbrock
 }
