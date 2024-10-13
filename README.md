@@ -1,2 +1,72 @@
+
 # multpois
-R package for analyzing nominal (unordered categorical) responses using the multinomial-Poisson trick. Although glm and lme4::glmer have a family=binomial option for dichotomous outcomes, they do not offer a family=multinomial option for polytomous outcomes. For purely between-subjects data, nnet::multinom meets this need, but it cannot handle repeated measures. This package effectively provides the equivalent of a family=multinomial option for glm and lme4::glmer.
+
+<!-- badges: start -->
+<!-- badges: end -->
+*Jacob O. Wobbrock, University of Washington <wobbrock@uw.edu>*
+
+The goal of multpois is to use the multinomial-Poisson trick to provide for the
+analysis of nominal response data with or without repeated measures. Such 
+responses, which often arise from surveys or experiments, consist of unordered
+categories. Although dichotomous responses can be analyzed with glm() or 
+lme4::glmer() using the family=binomial option, there is no analogous 
+family=multinomial option for polytomous responses. In the case of purely 
+between-subjects data, nnet::multinom() can be used, but it cannot take random
+factors and therefore cannot handle repeated measures. To address this issue,
+the multpois package provides for the equivalent of a family=multinomial option
+in glm() or lme4::glmer() via the multinomial-Poisson trick, which converts
+nominal response data into counts of categorical alternatives and analyzes these
+counts using (mixed) Poisson regression. Omnibus tests of main effects and 
+interactions are provided through analysis of variance-style output. Post hoc
+pairwise comparisons are also provided through contrast testing.
+
+## Installation
+
+You can install the development version of multpois like so:
+
+``` r
+install.packages("multpois")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+``` r
+library(multpois)
+set.seed(123) # for repeatable results
+
+## a generic 2x2 between-subjects example
+ac = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.1, 0.6, 0.3))
+ad = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.4, 0.4, 0.2))
+bc = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.5, 0.1, 0.4))
+bd = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.1, 0.5, 0.4))
+df = data.frame(
+  PId = factor(seq(1, 60, 1)),
+  X1 = factor(c(rep("a",30), rep("b",30))),
+  X2 = factor(rep(c(rep("c",15), rep("d",15)), times=2)),
+  Y = factor(c(ac, ad, bc, bd))
+)
+mosaicplot( ~ X1 + X2 + Y, data=df, cex=1, col=c("lightyellow","pink","lightgreen"))
+m = glm.mp(Y ~ X1*X2, data=df)
+Anova.mp(m)
+glm.mp.con(m, pairwise ~ X1*X2, adjust="holm")
+
+## a generic 2x2 within-subjects example
+ac = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.2, 0.6, 0.2))
+ad = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.4, 0.4, 0.2))
+bc = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.5, 0.2, 0.3))
+bd = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.2, 0.5, 0.3))
+df = data.frame(
+  PId = factor(rep(1:15, times=4)),
+  X1 = factor(c(rep("a",30), rep("b",30))),
+  X2 = factor(rep(c(rep("c",15), rep("d",15)), times=2)),
+  Y = factor(c(ac, ad, bc, bd))
+)
+View(df)
+mosaicplot( ~ X1 + X2 + Y, data=df, cex=1, col=c("lightyellow","pink","lightgreen"))
+m = glmer.mp(Y ~ X1*X2 + (1|PId), data=df)
+Anova.mp(m)
+glmer.mp.con(m, pairwise ~ X1*X2, adjust="holm")
+```
+
