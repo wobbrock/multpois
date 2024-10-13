@@ -22,7 +22,7 @@ pairwise comparisons are also provided through contrast testing.
 
 ## Installation
 
-You can install the development version of multpois like so:
+You can install the multpois package like so:
 
 ``` r
 install.packages("multpois")
