@@ -16,7 +16,7 @@ test_that("require the pairwise keyword", {
   )
   suppressMessages({
     m = glmer.mp(Y ~ X + (1|PId), data=df)
-    expect_error(glmer.mp.con(m, ~ X, adjust="none"), "glmer.mp.con requires the 'pairwise' keyword")
+    expect_error(glmer.mp.con(m, ~ X, adjust="none"), "'pairwise' is required on the left hand side of the ~ .")
   })
 })
 
@@ -33,7 +33,7 @@ test_that("require a glmerMod model", {
   )
   suppressMessages({
     m = lme4::lmer(Z ~ X + (1|PId), data=df)
-    expect_error(glmer.mp.con(m, pairwise ~ X, adjust="none"), "glmer.mp.con requires a model created by glmer.mp.")
+    expect_error(glmer.mp.con(m, pairwise ~ X, adjust="none"), "'model' must be created by glmer.mp.")
   })
 })
 
@@ -49,7 +49,7 @@ test_that("require a model with an alt factor", {
   )
   suppressMessages({
     m = lme4::glmer(Y ~ X + (1|PId), data=df, family=binomial)
-    expect_error(glmer.mp.con(m, pairwise ~ X, adjust="none"), "glmer.mp.con requires a model created by glmer.mp.")
+    expect_error(glmer.mp.con(m, pairwise ~ X, adjust="none"), "'model' must be created by glmer.mp.")
   })
 })
 
@@ -67,7 +67,7 @@ test_that("ensure all contrast terms are in model", {
   )
   suppressMessages({
     m = glmer.mp(Y ~ X1*X2 + (1|PId), data=df)
-    expect_error(glmer.mp.con(m, pairwise ~ X3, adjust="none"), "glmer.mp.con requires formula terms to be present in the model.")
+    expect_error(glmer.mp.con(m, pairwise ~ X3, adjust="none"), "'formula' terms must be present in 'model'.")
   })
 })
 
@@ -84,8 +84,21 @@ test_that("ensure contrast terms are factors", {
   )
   suppressMessages({
     m = glmer.mp(Y ~ X1*X2 + (1|PId), data=df)
-    expect_error(glmer.mp.con(m, pairwise ~ X1*X2, adjust="none"), "glmer.mp.con requires formula terms to be factors")
+    expect_error(glmer.mp.con(m, pairwise ~ X1*X2, adjust="none"), "'formula' terms must be factors:")
   })
+})
+
+###
+test_that("disallow family arguments", {
+  set.seed(123)
+  a = sample(c("yes","no"), size=30, replace=TRUE, prob=c(0.3, 0.7))
+  b = sample(c("yes","no"), size=30, replace=TRUE, prob=c(0.7, 0.3))
+  df = data.frame(
+    PId = factor(rep(1:30, times=2)),
+    X = factor(c(rep("a",30), rep("b",30))),
+    Y = factor(c(a,b))
+  )
+  expect_error(glmer.mp(Y ~ X + (1|PId), data=df, family=binomial), "'...' cannot contain a 'family' argument.")
 })
 
 ###
