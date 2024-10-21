@@ -19,6 +19,10 @@
 #'
 #' @param data A data frame in long-format. See the \code{data} entry for \code{\link[lme4]{glmer}}.
 #'
+#' @param ... Additional arguments to be passed to \code{\link[lme4]{glmer}}. Generally, these are
+#' unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+#' or \code{family} arguments. See \code{\link[lme4]{glmer}} for valid arguments.
+#'
 #' @returns A mixed-effects Poisson regression model of type \code{\link[lme4]{merMod}}, specifically
 #' of \emph{subclass} \code{glmerMod}. See the return value for \code{\link[lme4]{glmer}}.
 #'
@@ -99,23 +103,28 @@
 #' @importFrom stats poisson
 #'
 #' @export glmer.mp
-glmer.mp <- function(formula, data)
+glmer.mp <- function(formula, data, ...)
 {
+  # ensure data is a proper data frame
+  if (!is.data.frame(data)) {
+    stop("'data' must be a long-format data frame.")
+  }
+
   # ensure there is some D.V.
   t = terms(formula)
   if (attr(t, "response") != 1) {
-    stop("glmer.mp requires a formula with a dependent variable on the left-hand side.")
+    stop("'formula' must have a dependent variable on the left-hand side.")
   }
 
   # ensure there is only one D.V.
   DV = all.vars(formula[[2]])
   if (length(DV) != 1) {
-    stop("glmer.mp is only valid for one dependent variable. You have ", length(DV), ".")
+    stop("'formula' must only have one dependent variable. You have ", length(DV), ".")
   }
 
   # ensure D.V. is nominal
   if (!is.factor(data[[DV]])) {
-    stop("glmer.mp is only valid for nominal dependent variables (i.e., factors).\n\t", DV, " is of type ", class(data[[DV]]))
+    stop("'formula' must have a nominal dependent variable of type 'factor'.\n\t", DV, " is of type ", class(data[[DV]]))
   }
 
   # get the independent variables from the formula
@@ -124,7 +133,19 @@ glmer.mp <- function(formula, data)
   # ensure there is a random factor in the formula
   hasrnd = plyr::laply(IVs, function(term) as.list(term)[[1]] == quote(`|`))
   if (!any(hasrnd)) {
-    stop("glmer.mp is only valid for formulas with random factors, e.g., (1|S) or (X|S).")
+    stop("'formula' must have at least one random factor, e.g., (1|PId) or (X|PId).")
+  }
+
+  # ensure any optional arguments do not specify a formula, data frame, or family
+  optargs = list(...)
+  if (exists("formula", where=optargs)) {
+    stop("'...' cannot contain a 'formula' argument.")
+  }
+  if (exists("data", where=optargs)) {
+    stop("'...' cannot contain a 'data' argument.")
+  }
+  if (exists("family", where=optargs)) {
+    stop("'...' cannot contain a 'family' argument.")
   }
 
   # transform data table
@@ -150,6 +171,6 @@ glmer.mp <- function(formula, data)
   f = update.formula(f, . ~ . + alt) # add "alt" main effect
 
   # build and return our model
-  m = lme4::glmer(f, data=df, family=poisson) # m-P trick
+  m = lme4::glmer(formula=f, data=df, family=poisson, ...) # m-P trick
   return (m)
 }

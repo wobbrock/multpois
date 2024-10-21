@@ -16,14 +16,20 @@
 #' will have been built by \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}}, with
 #' \code{family=poisson}.)
 #'
-#' @param type The \code{type} parameter passed to \code{\link[car]{Anova}}. The default is type 3.
+#' @param type In the case of a type II or type III ANOVA, this value will be the \code{type} parameter
+#' passed to \code{\link[car]{Anova}}. In the case of a type I ANOVA, for models built with
+#' \code{\link{glm.mp}}, the \code{\link[stats]{anova.glm}} function will be called; for models built with
+#' \code{\link{glmer.mp}}, the \code{\link[lme4]{anova.merMod}} function will be called.
+#' The default is type 3. See the Details section for \code{\link[car]{Anova}}.
 #'
 #' @returns An ANOVA-style table of chi-square results for models built by \code{\link{glm.mp}} or
-#' \code{\link{glmer.mp}}. See the return value for \code{\link[car]{Anova}}.
+#' \code{\link{glmer.mp}}. See the return values for \code{\link[car]{Anova}}, \code{\link[stats]{anova.glm}},
+#' or \code{\link[lme4]{anova.merMod}}.
 #'
 #' @details
-#' The \code{Anova.mp} function uses \code{\link[car]{Anova}} behind the scenes to produce an ANOVA-style
-#' table with chi-square results.
+#' For type II or III ANOVAs, the \code{Anova.mp} function uses \code{\link[car]{Anova}} behind the scenes to
+#' produce an ANOVA-style table with chi-square results. For type I ANOVAs, it uses
+#' \code{\link[stats]{anova.glm}} or \code{\link[lme4]{anova.merMod}}.
 #'
 #' Users wishing to verify the correctness of these results can compare \code{\link[car]{Anova}} results
 #' for dichotomous response models built with \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}} (using
@@ -84,46 +90,111 @@
 #' Anova.mp(m2, type=3)
 #'
 #' @importFrom stats model.frame
+#' @importFrom stats formula
+#' @importFrom stats pchisq
+#' @importFrom stats anova
 #'
 #' @export Anova.mp
-Anova.mp <- function(model, type=c(3, 2, "III", "II"))
+Anova.mp <- function(model, type=c(3, 2, 1, "III", "II", "I"))
 {
   # ensure the model is of class "glm" or "glmerMod"
   mtype = as.list(class(model))
   if (!any(mtype == "glm" | mtype == "glmerMod")) {
-    stop("Anova.mp requires a model created by glm.mp or glmer.mp.")
+    stop("'model' must be created by glm.mp or glmer.mp.")
   }
 
   # get the data frame used to create the model
   df = model.frame(model)
 
   # df must contain an "alt" factor column or this isn't a model built by glm.mp or glmer.mp
-  if (!exists("alt", df)) {
-    stop("Anova.mp requires a model created by glm.mp or glmer.mp.")
+  if (!exists("alt", where=df)) {
+    stop("'model' must be created by glm.mp or glmer.mp.")
   }
 
-  # get the Anova type
+  # get the ANOVA type
   type = as.character(type)
   type = match.arg(type)
+  type = if (type %in% c(1,"I")) {1}
+  else if (type %in% c(2,"II"))  {2}
+  else if (type %in% c(3,"III")) {3}
 
   # run the Anova
-  a = car::Anova(model, type)
+  a = NULL
+  if (type == 1) # type I ANOVA
+  {
+    if (any(mtype == "glm")) { # glm.mp
+      a = anova(model, test="Chisq") # anova.glm
 
-  # update our output heading
-  attr(a, "heading")[3] = "via the multinomial-Poisson trick"
-  h = attr(a, "heading") # save
+      # insert N for Chisq result
+      a = dplyr::mutate(.data=a, .after="Df", "N"=nrow(df)/length(levels(df$alt)))
 
-  # insert N for chisq result
-  a = dplyr::mutate(.data=a, .after="Df", N=nrow(df)/length(levels(df$alt)))
+      # extract the rows that are interactions with "alt"
+      a = a[grep(":alt", rownames(a), fixed=TRUE),]
+      rownames(a) = sub(":alt", "", rownames(a), fixed=TRUE)
 
-  # extract relevant effect entries
-  a = a[grep(":alt", rownames(a), fixed=TRUE),]
-  rownames(a) = sub(":alt", "", rownames(a))
+      # rename the Deviance column to be Chisq and move it first
+      colnames(a) = sub("Deviance", "Chisq", colnames(a), fixed=TRUE)
+      a = dplyr::relocate(.data=a, "Chisq", .before="Df")
 
-  # make consistent
-  colnames(a)[1] = "Chisq"
+      # rename the Pr(>Chi) column to Pr(>Chisq) for consistency
+      colnames(a) = sub("Pr(>Chi)", "Pr(>Chisq)", colnames(a), fixed=TRUE)
 
-  attr(a, "heading") = h # restore
+      # remove unwanted columns
+      a[,"Resid. Df"] = NULL
+      a[,"Resid. Dev"] = NULL
+    }
+    else if (lme4::isGLMM(model)) { # glmer.mp
+      a = anova(model, refit=FALSE) # anova.merMod
+
+      # extract the rows that are interactions with "alt"
+      a = a[grep(":alt", rownames(a), fixed=TRUE),]
+      rownames(a) = sub(":alt", "", rownames(a), fixed=TRUE)
+
+      # rename the npar column to be Df
+      colnames(a) = sub("npar", "Df", colnames(a), fixed=TRUE)
+
+      # insert N for Chisq result
+      a = dplyr::mutate(.data=a, .after="Df", "N"=nrow(df)/length(levels(df$alt)))
+
+      # rename the F value column to be Chisq and move it first
+      colnames(a) = sub("F value", "Chisq", colnames(a), fixed=TRUE)
+      a = dplyr::relocate(.data=a, "Chisq", .before="Df")
+
+      # add a p-value column
+      a = dplyr::mutate(.data=a, .after="N", "Pr(>Chisq)"=1-pchisq(a$Chisq,a$Df))
+
+      # remove unwanted columns
+      a[,"Sum Sq"] = NULL
+      a[,"Mean Sq"] = NULL
+    }
+    else {
+      stop("'model' must be created by glm.mp or glmer.mp.")
+    }
+    # make our output message the same as for the Type II and III tests
+    DV = formula(model)[[2]]
+    attr(a, "heading") = paste0("Analysis of Deviance Table (Type I tests)\n\nResponse: ",
+                                DV, "\nvia the multinomial-Poisson trick")
+  }
+  else # type II or III ANOVA
+  {
+    a = car::Anova(model, type)
+
+    # update our output heading
+    attr(a, "heading")[3] = "via the multinomial-Poisson trick"
+    h = attr(a, "heading") # save
+
+    # insert N for chisq result
+    a = dplyr::mutate(.data=a, .after="Df", "N"=nrow(df)/length(levels(df$alt)))
+
+    # extract the rows that are interactions with "alt"
+    a = a[grep(":alt", rownames(a), fixed=TRUE),]
+    rownames(a) = sub(":alt", "", rownames(a), fixed=TRUE)
+
+    # make consistent
+    colnames(a)[1] = "Chisq"
+
+    attr(a, "heading") = h # restore
+  }
   return (a)
 }
 

@@ -21,6 +21,10 @@
 #' @param adjust A string indicating the \emph{p}-value adjustment to use. Defaults to \code{"holm"}. See the
 #' Details section for \code{\link[stats]{p.adjust}}.
 #'
+#' @param ... Additional arguments to be passed to \code{\link[lme4]{glmer}}. Generally, these are
+#' unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+#' or \code{family} arguments. See \code{\link[lme4]{glmer}} for valid arguments.
+#'
 #' @returns Pairwise comparisons for all levels indicated by the factors in \code{formula}.
 #'
 #' @details
@@ -99,30 +103,35 @@
 #' @importFrom stats terms
 #' @importFrom stats contrasts
 #' @importFrom stats 'contrasts<-'
+#' @importFrom stats formula
 #' @importFrom stats as.formula
 #' @importFrom stats poisson
 #' @importFrom stats p.adjust
 #'
 #' @export glmer.mp.con
-glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bonferroni","BH","BY","fdr","none"))
+glmer.mp.con <- function(
+    model,
+    formula,
+    adjust=c("holm","hochberg","hommel","bonferroni","BH","BY","fdr","none"),
+    ...)
 {
   # require the pairwise keyword
   if (formula[[2]] != "pairwise") {
-    stop("glmer.mp.con requires the 'pairwise' keyword on the left hand side of the ~ .")
+    stop("'pairwise' is required on the left hand side of the ~ .")
   }
 
   # ensure the model is of class "glmerMod"
   mtype = as.list(class(model))
   if (!any(mtype == "glmerMod")) {
-    stop("glmer.mp.con requires a model created by glmer.mp.")
+    stop("'model' must be created by glmer.mp.")
   }
 
   # get the data frame used for the model
   df = model.frame(model)
 
   # df must contain an "alt" factor column or this isn't a model built by glmer.mp
-  if (!exists("alt", df)) {
-    stop("glmer.mp.con requires a model created by glmer.mp.")
+  if (!exists("alt", where=df)) {
+    stop("'model' must be created by glmer.mp.")
   }
 
   # ensure there is a random factor in the original model
@@ -131,7 +140,7 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
   iv0 = as.list(attr(t0, "variables"))[c(-1,-2)]
   hasrnd = plyr::laply(iv0, function(term) as.list(term)[[1]] == quote(`|`))
   if (!any(hasrnd)) {
-    stop("glmer.mp.con requires a model with a random factor, e.g., (1|S) or (X|S).")
+    stop("'model' formula must have at least one random factor, e.g., (1|PId) or (X|PId).")
   }
 
   # get our contrast formula I.V.s
@@ -140,7 +149,7 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
 
   # ensure all contrast I.V.s were in the original model formula
   if (!any(IVs %in% iv0)) {
-    stop("glmer.mp.con requires formula terms to be present in the model.")
+    stop("'formula' terms must be present in 'model'.")
   }
 
   # ensure all contrast formula I.V.s are factors
@@ -152,7 +161,19 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
         snf = paste0(snf, '\n\t', IVs[[i]], " is of type ", class(df[[ IVs[[i]] ]]))
       }
     }
-    stop("glmer.mp.con requires formula terms to be factors:", snf)
+    stop("'formula' terms must be factors:", snf)
+  }
+
+  # ensure any optional arguments do not specify a formula, data frame, or family
+  optargs = list(...)
+  if (exists("formula", where=optargs)) {
+    stop("'...' cannot contain a 'formula' argument.")
+  }
+  if (exists("data", where=optargs)) {
+    stop("'...' cannot contain a 'data' argument.")
+  }
+  if (exists("family", where=optargs)) {
+    stop("'...' cannot contain a 'family' argument.")
   }
 
   # build our new composite factor name and column values
@@ -199,14 +220,14 @@ glmer.mp.con <- function(model, formula, adjust=c("holm","hochberg","hommel","bo
       f = as.formula(s) # convert to formula
 
       # finally, create our model and examine its effects
-      m = lme4::glmer(f, data=d0, family=poisson) # m-P trick
+      m = lme4::glmer(formula=f, data=d0, family=poisson, ...) # m-P trick
       a = car::Anova(m, type=3)
-      a = a[grep(":alt", rownames(a)),] # get relevant entry
+      a = a[grep(":alt", rownames(a), fixed=TRUE),] # get relevant entry
 
       # improve our row
       rownames(a)[1] = paste0(lvls[i], " - ", lvls[j]) # update contrast label
       colnames(a)[3] = "p.value" # simplify p-value label
-      a = dplyr::mutate(a, .after="Df", N=nrow(d0)/length(levels(df$alt))) # insert N
+      a = dplyr::mutate(a, .after="Df", "N"=nrow(d0)/length(levels(df$alt))) # insert N
 
       # create a new output row entry and add it to our output table
       r = list(Contrast = rownames(a)[1],

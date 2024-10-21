@@ -18,6 +18,10 @@
 #'
 #' @param data A data frame in long-format. See the \code{data} entry for \code{\link[stats]{glm}}.
 #'
+#' @param ... Additional arguments to be passed to \code{\link[stats]{glm}}. Generally, these are
+#' unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+#' or \code{family} arguments. See \code{\link[stats]{glm}} for valid arguments.
+#'
 #' @returns A Poisson regression model of type \code{\link[stats]{glm}}. See the return value for
 #' \code{\link[stats]{glm}}.
 #'
@@ -94,23 +98,28 @@
 #' @importFrom stats poisson
 #'
 #' @export glm.mp
-glm.mp <- function(formula, data)
+glm.mp <- function(formula, data, ...)
 {
+  # ensure data is a proper data frame
+  if (!is.data.frame(data)) {
+    stop("'data' must be a long-format data frame.")
+  }
+
   # ensure there is some D.V.
   t = terms(formula)
   if (attr(t, "response") != 1) {
-    stop("glm.mp requires a formula with a dependent variable on the left-hand side.")
+    stop("'formula' must have a dependent variable on the left-hand side.")
   }
 
   # ensure there is only one D.V.
   DV = all.vars(formula[[2]])
   if (length(DV) != 1) {
-    stop("glm.mp is only valid for one dependent variable. You have ", length(DV), ".")
+    stop("'formula' must only have one dependent variable. You have ", length(DV), ".")
   }
 
   # ensure D.V. is nominal
   if (!is.factor(data[[DV]])) {
-    stop("glm.mp is only valid for nominal dependent variables (i.e., factors).\n\t", DV, " is of type ", class(data[[DV]]))
+    stop("'formula' must have a nominal dependent variable of type 'factor'.\n\t", DV, " is of type ", class(data[[DV]]))
   }
 
   # get the independent variables from the formula
@@ -119,7 +128,19 @@ glm.mp <- function(formula, data)
   # ensure there are no random factors in the formula
   hasrnd = plyr::laply(IVs, function(term) as.list(term)[[1]] == quote(`|`))
   if (any(hasrnd)) {
-    stop("glm.mp is only valid for formulas without random factors.")
+    stop("'formula' cannot have random factors.")
+  }
+
+  # ensure any optional arguments do not specify a formula, data frame, or family
+  optargs = list(...)
+  if (exists("formula", where=optargs)) {
+    stop("'...' cannot contain a 'formula' argument.")
+  }
+  if (exists("data", where=optargs)) {
+    stop("'...' cannot contain a 'data' argument.")
+  }
+  if (exists("family", where=optargs)) {
+    stop("'...' cannot contain a 'family' argument.")
   }
 
   # transform data table
@@ -138,6 +159,6 @@ glm.mp <- function(formula, data)
   f = update.formula(formula, . ~ . * alt)
 
   # build and return our model
-  m = glm(f, data=df, family=poisson) # m-P trick
+  m = glm(formula=f, data=df, family=poisson, ...) # m-P trick
   return (m)
 }
