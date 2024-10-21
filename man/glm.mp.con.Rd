@@ -7,7 +7,8 @@
 glm.mp.con(
   model,
   formula,
-  adjust = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+  adjust = c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"),
+  ...
 )
 }
 \arguments{
@@ -19,6 +20,10 @@ side of the formula. See the \code{specs} entry for \code{\link[emmeans]{emmeans
 
 \item{adjust}{A string indicating the \emph{p}-value adjustment to use. Defaults to \code{"holm"}. See the
 Details section for \code{\link[stats]{p.adjust}}.}
+
+\item{...}{Additional arguments to be passed to \code{\link[stats]{glm}}. Generally, these are
+unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+or \code{family} arguments. See \code{\link[stats]{glm}} for valid arguments.}
 }
 \value{
 Pairwise comparisons for all levels indicated by the factors in \code{formula}.

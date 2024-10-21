@@ -4,18 +4,23 @@
 \alias{Anova.mp}
 \title{Get ANOVA-style results for a multinomial-Poisson model}
 \usage{
-Anova.mp(model, type = c(3, 2, "III", "II"))
+Anova.mp(model, type = c(3, 2, 1, "III", "II", "I"))
 }
 \arguments{
 \item{model}{A model built by \code{\link{glm.mp}} or \code{\link{glmer.mp}}. (The underlying model
 will have been built by \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}}, with
 \code{family=poisson}.)}
 
-\item{type}{The \code{type} parameter passed to \code{\link[car]{Anova}}. The default is type 3.}
+\item{type}{In the case of a type II or type III ANOVA, this value will be the \code{type} parameter
+passed to \code{\link[car]{Anova}}. In the case of a type I ANOVA, for models built with
+\code{\link{glm.mp}}, the \code{\link[stats]{anova.glm}} function will be called; for models built with
+\code{\link{glmer.mp}}, the \code{\link[lme4]{anova.merMod}} function will be called.
+The default is type 3. See the Details section for \code{\link[car]{Anova}}.}
 }
 \value{
 An ANOVA-style table of chi-square results for models built by \code{\link{glm.mp}} or
-\code{\link{glmer.mp}}. See the return value for \code{\link[car]{Anova}}.
+\code{\link{glmer.mp}}. See the return values for \code{\link[car]{Anova}}, \code{\link[stats]{anova.glm}},
+or \code{\link[lme4]{anova.merMod}}.
 }
 \description{
 Get ANOVA-style results for a model returned by \code{\link{glm.mp}} or \code{\link{glmer.mp}}.
@@ -23,8 +28,9 @@ The output table contains chi-square results for the main effects and interactio
 the given model.
 }
 \details{
-The \code{Anova.mp} function uses \code{\link[car]{Anova}} behind the scenes to produce an ANOVA-style
-table with chi-square results.
+For type II or III ANOVAs, the \code{Anova.mp} function uses \code{\link[car]{Anova}} behind the scenes to
+produce an ANOVA-style table with chi-square results. For type I ANOVAs, it uses
+\code{\link[stats]{anova.glm}} or \code{\link[lme4]{anova.merMod}}.
 
 Users wishing to verify the correctness of these results can compare \code{\link[car]{Anova}} results
 for dichotomous response models built with \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}} (using

@@ -4,7 +4,7 @@
 \alias{glmer.mp}
 \title{Build a multinomial-Poisson GLMM for nominal response data}
 \usage{
-glmer.mp(formula, data)
+glmer.mp(formula, data, ...)
 }
 \arguments{
 \item{formula}{A formula object in the style of, e.g., \code{Y ~ X1*X2 + (1|PId)}, where \code{X1} and
@@ -12,6 +12,10 @@ glmer.mp(formula, data)
 response \code{Y} must be of type \code{factor}. See the \code{formula} entry for \code{\link[lme4]{glmer}}.}
 
 \item{data}{A data frame in long-format. See the \code{data} entry for \code{\link[lme4]{glmer}}.}
+
+\item{...}{Additional arguments to be passed to \code{\link[lme4]{glmer}}. Generally, these are
+unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+or \code{family} arguments. See \code{\link[lme4]{glmer}} for valid arguments.}
 }
 \value{
 A mixed-effects Poisson regression model of type \code{\link[lme4]{merMod}}, specifically

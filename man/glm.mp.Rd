@@ -4,7 +4,7 @@
 \alias{glm.mp}
 \title{Build a multinomial-Poisson GLM for nominal response data}
 \usage{
-glm.mp(formula, data)
+glm.mp(formula, data, ...)
 }
 \arguments{
 \item{formula}{A formula object in the style of, e.g., \code{Y ~ X1*X2}, where \code{X1} and \code{X2}
@@ -12,6 +12,10 @@ are factors or predictors. The response \code{Y} must be of type \code{factor}. 
 entry for \code{\link[stats]{glm}}.}
 
 \item{data}{A data frame in long-format. See the \code{data} entry for \code{\link[stats]{glm}}.}
+
+\item{...}{Additional arguments to be passed to \code{\link[stats]{glm}}. Generally, these are
+unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+or \code{family} arguments. See \code{\link[stats]{glm}} for valid arguments.}
 }
 \value{
 A Poisson regression model of type \code{\link[stats]{glm}}. See the return value for
