@@ -1,6 +1,6 @@
 Package: multpois
 Title: Analyze Nominal Response Data with the Multinomial-Poisson Trick
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Jacob O.", "Wobbrock", , "wobbrock@uw.edu", role = c("aut", "cre","cph"),
            comment = c(ORCID = "0000-0003-3675-5491"))
@@ -12,13 +12,12 @@ Description: Dichotomous responses having two categories can be analyzed
     family=multinomial option. For between-subjects data,
     nnet::multinom() can address this need, but it cannot handle random
     factors and therefore cannot handle repeated measures. To address this
-    gap, we implement the multinomial-Poisson trick (Baker 1994) <doi:10.2307/2348134>, 
-    which transforms nominal response data into counts for each categorical 
-    alternative. These counts are then analyzed using (mixed) Poisson regression. 
-    Omnibus analyses of variance can be run along with post hoc pairwise 
-    comparisons. For users wishing to analyze nominal responses from surveys 
-    or experiments, the functions in this package essentially act as though 
-    stats::glm() or lme4::glmer() had a family=multinomial option.
+    gap, we transform nominal response data into counts for each categorical 
+    alternative. These counts are then analyzed using (mixed) Poisson regression
+    as per Baker (1994) <doi:10.2307/2348134>. Omnibus analyses of variance can be 
+    run along with post hoc pairwise comparisons. For users wishing to analyze nominal 
+    responses from surveys or experiments, the functions in this package essentially 
+    act as though stats::glm() or lme4::glmer() had a family=multinomial option.
 License: GPL (>= 2)
 URL: https://github.com/wobbrock/multpois/
 BugReports: https://github.com/wobbrock/multpois/issues/new
