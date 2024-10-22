@@ -20,7 +20,7 @@ Description: Dichotomous responses having two categories can be analyzed
     act as though stats::glm() or lme4::glmer() had a family=multinomial option.
 License: GPL (>= 2)
 URL: https://github.com/wobbrock/multpois/
-BugReports: https://github.com/wobbrock/multpois/issues/new
+BugReports: https://github.com/wobbrock/multpois/issues
 Depends: 
     R (>= 2.10)
 Imports:

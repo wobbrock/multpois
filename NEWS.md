@@ -10,6 +10,7 @@ Minor changes:
 * Added type I ANOVAs to Anova.mp and updated documentation.
 * Added additional tests for the above.
 * Updated function documentation for the above.
+* Updated BugReports in DESCRIPTION to be https://github.com/wobbrock/multpois/issues
 
 
 # multpois 0.1.0
