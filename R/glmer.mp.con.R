@@ -206,15 +206,23 @@ glmer.mp.con <- function(
       # get the relevant subset of rows for this comparison
       d0 = df[df[[facname]] == lvls[i] | df[[facname]] == lvls[j],]
 
-      # update factor levels and contrasts for subset
+      # update our composite factor's levels and contrasts
       d0[[facname]] = factor(d0[[facname]])
       contrasts(d0[[facname]]) <- "contr.sum"
 
       # create our model formula for this comparison
       s = paste0(DV, " ~ ", facname, " + alt + ", facname, ":alt")
       for (k in 1:length(tlabs)) {
+        # keep any random factors in the formula
         if (grepl("|", tlabs[k], fixed=TRUE)) {
           s = paste0(s, " + (", tlabs[k], ")")
+
+          # update the random factor's levels to match the subset table
+          rndfac = trimws(strsplit(tlabs[k], "|", fixed=TRUE)[[1]][2])
+          hascol = plyr::laply(colnames(d0), function(cn) cn == rndfac)
+          if (any(hascol)) {
+            d0[[rndfac]] = factor(d0[[rndfac]]) # update
+          }
         }
       }
       f = as.formula(s) # convert to formula
