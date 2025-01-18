@@ -1,6 +1,6 @@
 Package: multpois
 Title: Analyze Nominal Response Data with the Multinomial-Poisson Trick
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person("Jacob O.", "Wobbrock", , "wobbrock@uw.edu", role = c("aut", "cre","cph"),
            comment = c(ORCID = "0000-0003-3675-5491"))

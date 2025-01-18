@@ -1,3 +1,13 @@
+# multpois 0.2.1
+
+Minor changes:
+
+* Fixed unwanted warnings in glmer.mp.con caused when random factors end up having
+  fewer levels in the subsetted table than in the full table. The fix was to update
+  any random factors' levels in the subset tables constructed dynamically for pairwise
+  comparisons. Any post hoc pairwise comparison calculations remain unchanged.
+
+
 # multpois 0.2.0
 
 Minor changes:
