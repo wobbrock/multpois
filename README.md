@@ -37,37 +37,37 @@ library(multpois)
 set.seed(123) # for repeatable results
 
 ## a generic 2x2 between-subjects example
-ac = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.1, 0.6, 0.3))
-ad = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.4, 0.4, 0.2))
-bc = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.5, 0.1, 0.4))
-bd = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.1, 0.5, 0.4))
+ac = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.1, 0.6, 0.3))
+ad = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.4, 0.4, 0.2))
+bc = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.5, 0.1, 0.4))
+bd = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.1, 0.5, 0.4))
 df1 = data.frame(
   PId = factor(seq(1, 60, 1)),
   X1 = factor(c(rep("a",30), rep("b",30))),
   X2 = factor(rep(c(rep("c",15), rep("d",15)), times=2)),
-  Y = factor(c(ac, ad, bc, bd))
+  Y = factor(c(ac, ad, bc, bd), levels=c("yes","no","maybe"))
 )
 View(df1)
-mosaicplot( ~ X1 + X2 + Y, data=df1, cex=1, col=c("lightyellow","pink","lightgreen"))
+mosaicplot( ~ X1 + X2 + Y, data=df1, cex=1, col=c("lightgreen","pink","lightyellow"))
 m = glm.mp(Y ~ X1*X2, data=df1)
-Anova.mp(m)
+Anova.mp(m, type=3)
 glm.mp.con(m, pairwise ~ X1*X2, adjust="holm")
 
 ## a generic 2x2 within-subjects example
-ac = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.2, 0.6, 0.2))
-ad = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.4, 0.4, 0.2))
-bc = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.5, 0.2, 0.3))
-bd = sample(c("maybe","no","yes"), size=15, replace=TRUE, prob=c(0.2, 0.5, 0.3))
+ac = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.2, 0.6, 0.2))
+ad = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.4, 0.4, 0.2))
+bc = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.5, 0.2, 0.3))
+bd = sample(c("yes","no","maybe"), size=15, replace=TRUE, prob=c(0.2, 0.5, 0.3))
 df2 = data.frame(
   PId = factor(rep(1:15, times=4)),
   X1 = factor(c(rep("a",30), rep("b",30))),
   X2 = factor(rep(c(rep("c",15), rep("d",15)), times=2)),
-  Y = factor(c(ac, ad, bc, bd))
+  Y = factor(c(ac, ad, bc, bd), levels=c("yes","no","maybe"))
 )
 View(df2)
-mosaicplot( ~ X1 + X2 + Y, data=df2, cex=1, col=c("lightyellow","pink","lightgreen"))
+mosaicplot( ~ X1 + X2 + Y, data=df2, cex=1, col=c("lightgreen","pink","lightyellow"))
 m = glmer.mp(Y ~ X1*X2 + (1|PId), data=df2)
-Anova.mp(m)
+Anova.mp(m, type=3)
 glmer.mp.con(m, pairwise ~ X1*X2, adjust="holm")
 ```
 
