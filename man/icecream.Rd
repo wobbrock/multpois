@@ -10,7 +10,7 @@ A data frame with 160 observations on the following 4 variables:
 \item{PId}{a subject identifier with levels \code{"1"} ... \code{"40"}}
 \item{Age}{a between-subjects factor with levels \code{"adult"}, \code{"child"}}
 \item{Season}{a within-subjects factor with levels \code{"fall"}, \code{"winter"}, \code{"spring"}, \code{"summer"}}
-\item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}, \code{"other"}}
+\item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}}
 }
 }
 \description{
@@ -21,7 +21,7 @@ were queried four times over the course of a year, once in the middle of each se
 
 This dataset has a polytomous response \code{Pref} and two factors,
 \code{Age} and \code{Season}. The response has the unordered categories
-\code{\{vanilla, chocolate, strawberry, other\}}. Factor \code{Age} has levels
+\code{\{vanilla, chocolate, strawberry\}}. Factor \code{Age} has levels
 \code{\{adult, child\}}, and factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
 It also has a \code{PId} column for participant identifier. Each participant identifier is repeated
 four times, once per season.
@@ -30,9 +30,9 @@ four times, once per season.
 data(icecream, package="multpois")
 
 icecream$PId = factor(icecream$PId)
-icecream$Pref = factor(icecream$Pref)
-icecream$Age = factor(icecream$Age)
-icecream$Season = factor(icecream$Season)
+icecream$Pref = factor(icecream$Pref, levels=c("vanilla","chocolate","strawberry"))
+icecream$Age = factor(icecream$Age, levels=c("adult","child"))
+icecream$Season = factor(icecream$Season, levels=c("fall","winter","spring","summer"))
 contrasts(icecream$Age) <- "contr.sum"
 contrasts(icecream$Season) <- "contr.sum"
 

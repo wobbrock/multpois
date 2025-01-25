@@ -24,7 +24,7 @@ Each participant is on only one row.
 data(bs3, package="multpois")
 
 bs3$PId = factor(bs3$PId)
-bs3$Y = factor(bs3$Y)
+bs3$Y = factor(bs3$Y, levels=c("yes","no","maybe"))
 bs3$X1 = factor(bs3$X1)
 bs3$X2 = factor(bs3$X2)
 contrasts(bs3$X1) <- "contr.sum"

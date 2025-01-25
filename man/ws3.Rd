@@ -24,7 +24,7 @@ Participant identifiers are repeated across rows.
 data(ws3, package="multpois")
 
 ws3$PId = factor(ws3$PId)
-ws3$Y = factor(ws3$Y)
+ws3$Y = factor(ws3$Y, levels=c("yes","no","maybe"))
 ws3$X1 = factor(ws3$X1)
 ws3$X2 = factor(ws3$X2)
 contrasts(ws3$X1) <- "contr.sum"
