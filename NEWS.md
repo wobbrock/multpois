@@ -1,3 +1,14 @@
+# multpois 0.3.1
+
+Patch:
+
+* Updated data and examples to set the levels of responses with "yes", "no", and
+  "maybe" categories so they show in that order. Same for the icecream data to
+  sort by "vanilla", "chocolate", and "strawberry", and seasons to be "fall", 
+  "winter", "spring", and "summer".
+
+
+
 # multpois 0.3.0
 
 Minor changes:
