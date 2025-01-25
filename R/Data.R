@@ -31,7 +31,7 @@
 #' data(bs2, package="multpois")
 #'
 #' bs2$PId = factor(bs2$PId)
-#' bs2$Y = factor(bs2$Y)
+#' bs2$Y = factor(bs2$Y, levels=c("yes","no"))
 #' bs2$X1 = factor(bs2$X1)
 #' bs2$X2 = factor(bs2$X2)
 #' contrasts(bs2$X1) <- "contr.sum"
@@ -70,7 +70,7 @@ NULL
 #' data(bs3, package="multpois")
 #'
 #' bs3$PId = factor(bs3$PId)
-#' bs3$Y = factor(bs3$Y)
+#' bs3$Y = factor(bs3$Y, levels=c("yes","no","maybe"))
 #' bs3$X1 = factor(bs3$X1)
 #' bs3$X2 = factor(bs3$X2)
 #' contrasts(bs3$X1) <- "contr.sum"
@@ -109,7 +109,7 @@ NULL
 #' data(ws2, package="multpois")
 #'
 #' ws2$PId = factor(ws2$PId)
-#' ws2$Y = factor(ws2$Y)
+#' ws2$Y = factor(ws2$Y, levels=c("yes","no"))
 #' ws2$X1 = factor(ws2$X1)
 #' ws2$X2 = factor(ws2$X2)
 #' contrasts(ws2$X1) <- "contr.sum"
@@ -148,7 +148,7 @@ NULL
 #' data(ws3, package="multpois")
 #'
 #' ws3$PId = factor(ws3$PId)
-#' ws3$Y = factor(ws3$Y)
+#' ws3$Y = factor(ws3$Y, levels=c("yes","no","maybe"))
 #' ws3$X1 = factor(ws3$X1)
 #' ws3$X2 = factor(ws3$X2)
 #' contrasts(ws3$X1) <- "contr.sum"
@@ -171,7 +171,7 @@ NULL
 #'
 #' This dataset has a polytomous response \code{Pref} and two factors,
 #' \code{Age} and \code{Season}. The response has the unordered categories
-#' \code{\{vanilla, chocolate, strawberry, other\}}. Factor \code{Age} has levels
+#' \code{\{vanilla, chocolate, strawberry\}}. Factor \code{Age} has levels
 #' \code{\{adult, child\}}, and factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
 #' It also has a \code{PId} column for participant identifier. Each participant identifier is repeated
 #' four times, once per season.
@@ -183,7 +183,7 @@ NULL
 #'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"40"}}
 #'      \item{Age}{a between-subjects factor with levels \code{"adult"}, \code{"child"}}
 #'      \item{Season}{a within-subjects factor with levels \code{"fall"}, \code{"winter"}, \code{"spring"}, \code{"summer"}}
-#'      \item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}, \code{"other"}}
+#'      \item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}}
 #' }
 #'
 #' @seealso See \code{vignette("multpois", package="multpois")} for a complete analysis of this data set.
@@ -193,9 +193,9 @@ NULL
 #' data(icecream, package="multpois")
 #'
 #' icecream$PId = factor(icecream$PId)
-#' icecream$Pref = factor(icecream$Pref)
-#' icecream$Age = factor(icecream$Age)
-#' icecream$Season = factor(icecream$Season)
+#' icecream$Pref = factor(icecream$Pref, levels=c("vanilla","chocolate","strawberry"))
+#' icecream$Age = factor(icecream$Age, levels=c("adult","child"))
+#' icecream$Season = factor(icecream$Season, levels=c("fall","winter","spring","summer"))
 #' contrasts(icecream$Age) <- "contr.sum"
 #' contrasts(icecream$Season) <- "contr.sum"
 #'
