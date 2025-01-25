@@ -20,16 +20,18 @@ knitr::opts_chunk$set(
 
 This vignette shows how to use the `multpois` package for analyzing nominal response data.
 Nominal responses, sometimes called multinomial responses, are unordered categories. In 
-certain experiments or surveys, the dependent variable can be one of *N* categories. For example,
-we might ask people what their favorite ice cream flavor is: vanilla, chocolate, or strawberry. This four-category response would be a polytomous dependent variable. Perhaps we wish to ask adults and 
-children about their favorite ice cream to see if there is a difference by age group. We would then 
-have a two-level between-subjects factor. If we ask each respondent only once, this data set would 
-represent a one-way between-subjects design. But perhaps we ask each participant once 
-*each season*&mdash;in fall, winter, spring, and summer&mdash;to see if their responses change. 
-Now we would have a four-level within-subjects factor, i.e., repeated measures. 
+certain experiments or surveys, the dependent variable can be one of *N* categories. 
 
-The `multpois` package helps us analyze this type of data, where the dependent variable is nominal. 
-It does so by modeling nominal responses as counts of category choices and uses (mixed) Poisson 
+For example, let's say we ask people what their favorite ice cream flavor is: vanilla, chocolate, or strawberry. This three-category response would be a *polytomous dependent variable*. Also, let's say we wish to ask both
+adults and children about their favorite ice cream flavors to see if there is a difference by age group. 
+We would then have a two-level between-subjects factor, *Age*. If we ask each respondent only once, this data 
+set would represent a one-way between-subjects design. But perhaps we ask each participant once 
+*each season*&mdash;in fall, winter, spring, and summer&mdash;to see if their responses vary by season. 
+Now we would have a four-level within-subjects factor, *Season*, resulting in repeated measures, since each
+respondent would be asked four times.
+
+The `multpois` package helps us analyze this type of data, where the dependent variable is nominal.
+It does so by modeling nominal responses as counts of category choices and uses mixed-effects Poisson 
 regression to analyze these counts (Baker 1994, Chen &amp; Kuo 2001). This technique is known as 
 the multinomial-Poisson transformation (Guimaraes 2004) or trick (Lee et al. 2017).
 
@@ -53,10 +55,10 @@ R already provides options for the following situations:
   function from the `emmeans` package can be used to produce *post hoc* pairwise comparisons.
 
 * If the response is polytomous, and one or more factors is within-subjects, there is no easy
-  option similar to the three above. The `multinom` function in `nnet` cannot take random factors
+  option similar to the three above. The `multinom` function in `nnet` cannot accept random factors
   to handle repeated measures, and the `glmer` function in `lme4` does not offer a 
-  `family=multinomial` option. It is this case in particular that this package was created to
-  address, although it can address the above three scenarios, also.
+  `family=multinomial` option. This package was created to address this case in particular, although 
+  it can address the above three cases, also.
 
 The first four analyses below illustrate 2&times;2 designs having between- and within-subjects factors and dichotomous and polytomous responses. (The functions in `multpois` are not limited to 2&times;2 designs; 
 any number of between- and within-subjects factors can be used.) The first three examples first use
@@ -121,7 +123,7 @@ a dichotomous response. Factor `X1` has levels `{a, b}`, factor `X2` has levels
 ```{r}
 data(bs2, package="multpois")
 bs2$PId = factor(bs2$PId)
-bs2$Y = factor(bs2$Y)
+bs2$Y = factor(bs2$Y, levels=c("yes","no"))
 bs2$X1 = factor(bs2$X1)
 bs2$X2 = factor(bs2$X2)
 contrasts(bs2$X1) <- "contr.sum"
@@ -130,9 +132,9 @@ contrasts(bs2$X2) <- "contr.sum"
 
 Let's visualize this data set using a mosaic plot:
 
-```{r fig.cap="**Figure 1.** Proportions of `no` (pink) and `yes` (green) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
+```{r fig.cap="**Figure 1.** Proportions of `yes` (green) and `no` (pink) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
 xt = xtabs( ~ X1 + X2 + Y, data=bs2)
-mosaicplot(xt, main="Y by X1, X2", las=1, col=c("pink","lightgreen"))
+mosaicplot(xt, main="Y by X1, X2", las=1, col=c("lightgreen","pink"))
 ```
 
 Given `X1` and `X2` are both between-subjects factors, and `Y` is a dichotomous
@@ -154,7 +156,7 @@ glm.mp.con(m2, pairwise ~ X1*X2, adjust="holm")
 ```
 
 The omnibus results from logistic regression and from the multinomial-Poisson trick match,
-and the results from the *post hoc* pairwise comparisons are quite similar.
+and the results from the *post hoc* pairwise comparisons are similar.
 
 
 <a name="bs3"></a>
@@ -168,7 +170,7 @@ a polytomous response. Factor `X1` has levels `{a, b}`, factor `X2` has levels
 ```{r}
 data(bs3, package="multpois")
 bs3$PId = factor(bs3$PId)
-bs3$Y = factor(bs3$Y)
+bs3$Y = factor(bs3$Y, levels=c("yes","no","maybe"))
 bs3$X1 = factor(bs3$X1)
 bs3$X2 = factor(bs3$X2)
 contrasts(bs3$X1) <- "contr.sum"
@@ -177,9 +179,9 @@ contrasts(bs3$X2) <- "contr.sum"
 
 Let's again visualize the data using a mosaic plot:
 
-```{r fig.cap="**Figure 2.** Proportions of `maybe` (yellow), `no` (pink), and `yes` (green) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
+```{r fig.cap="**Figure 2.** Proportions of `yes` (green), `no` (pink), and `maybe` (yellow) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
 xt = xtabs( ~ X1 + X2 + Y, data=bs3)
-mosaicplot(xt, main="Y by X1, X2", las=1, col=c("lightyellow","pink","lightgreen"))
+mosaicplot(xt, main="Y by X1, X2", las=1, col=c("lightgreen","pink","lightyellow"))
 ```
 
 Given `X1` and `X2` are both between-subjects factors, and `Y` is a polytomous
@@ -211,7 +213,7 @@ glm.mp.con(m4, pairwise ~ X1*X2, adjust="holm")
 ```
 
 Again, the results from multinomial logistic regression and from the multinomial-Poisson trick match.
-The results from the *post hoc* pairwise comparisons are fairly similar.
+The results from the *post hoc* pairwise comparisons are similar.
 
 
 <a name="ws2"></a>
@@ -226,7 +228,7 @@ across rows, indicating participants were measured repeatedly.
 ```{r}
 data(ws2, package="multpois")
 ws2$PId = factor(ws2$PId)
-ws2$Y = factor(ws2$Y)
+ws2$Y = factor(ws2$Y, levels=c("yes","no"))
 ws2$X1 = factor(ws2$X1)
 ws2$X2 = factor(ws2$X2)
 contrasts(ws2$X1) <- "contr.sum"
@@ -235,14 +237,14 @@ contrasts(ws2$X2) <- "contr.sum"
 
 Let's visualize this data set using a mosaic plot:
 
-```{r fig.cap="**Figure 3.** Proportions of `no` (pink) and `yes` (green) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
+```{r fig.cap="**Figure 3.** Proportions of `yes` (green) and `no` (pink) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
 xt = xtabs( ~ X1 + X2 + Y, data=ws2)
-mosaicplot(xt, main="Y by X1, X2", las=1, col=c("pink","lightgreen"))
+mosaicplot(xt, main="Y by X1, X2", las=1, col=c("lightgreen","pink"))
 ```
 
 Given `X1` and `X2` are both within-subjects factors, and `Y` is a dichotomous
 response, we can analyze this using mixed-effects logistic regression. The function
-`glmer` from the `lme4` package provides this for us:
+`glmer` from the `lme4` package provides this to us:
 
 ```{r message=FALSE, warning=FALSE}
 m5 = glmer(Y ~ X1*X2 + (1|PId), data=ws2, family=binomial)
@@ -267,10 +269,10 @@ including the results from the *post hoc* pairwise comparisons.
 
 ## Within-subjects 2&times;2 design with polytomous response
 
-This fourth example is the reason that the `multpois` package was created. Unlike the three
-examples above, there are not straightforward options for analyzing nominal responses with repeated 
-measures and obtaining ANOVA-style results. Some functions do offer mixed-effects multinomial regression modeling, such as `mblogit` in the `mclogit` package, but they do not enable ANOVA-style output. Other advanced methods exist, such as Markov chain Monte Carlo (MCMC) methods in the `MCMCglmm` library, which does have a
-`family=multinomial` option, but these methods are complex and deviate from the approaches illustrated 
+This fourth example illustrates the main reason that the `multpois` package was created. Unlike the three
+examples above, there are no straightforward options for analyzing nominal responses with repeated 
+measures and obtaining ANOVA-style results. Some functions do offer mixed-effects multinomial regression modeling, such as `mblogit` in the `mclogit` package, but they do not enable ANOVA-style output. Other advanced methods exist, such as Markov Chain Monte Carlo (MCMC) methods in the `MCMCglmm` package, which does have a
+`family=multinomial` option, but these Bayesian methods are complex and deviate from the approaches illustrated 
 above. Fortunately, we can again use the multinomial-Poisson trick.
 
 Let's load and prepare our fourth data set, a 2&times;2 within-subjects design with
@@ -281,7 +283,7 @@ across rows, indicating participants were measured repeatedly.
 ```{r}
 data(ws3, package="multpois")
 ws3$PId = factor(ws3$PId)
-ws3$Y = factor(ws3$Y)
+ws3$Y = factor(ws3$Y, levels=c("yes","no","maybe"))
 ws3$X1 = factor(ws3$X1)
 ws3$X2 = factor(ws3$X2)
 contrasts(ws3$X1) <- "contr.sum"
@@ -290,12 +292,12 @@ contrasts(ws3$X2) <- "contr.sum"
 
 Let's visualize this data set using a mosaic plot:
 
-```{r fig.cap="**Figure 4.** Proportions of `maybe` (yellow), `no` (pink), and `yes` (green) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
+```{r fig.cap="**Figure 4.** Proportions of `yes` (green), `no` (pink), and `maybe` (yellow) responses in four conditions: `{a, c}`, `{a, d}`, `{b, c}`, and `{b, d}`.", fig.height=4.5, fig.width=4}
 xt = xtabs( ~ X1 + X2 + Y, data=ws3)
-mosaicplot(xt, main="Y by X1, X2", las=1, col=c("lightyellow","pink","lightgreen"))
+mosaicplot(xt, main="Y by X1, X2", las=1, col=c("lightgreen","pink","lightyellow"))
 ```
 
-Because `multinom` from the `nnet` package cannot handle random factors, it cannot model repeated measures. 
+Because `multinom` from the `nnet` package cannot accept random factors, it cannot model repeated measures. 
 And because `glmer` from the `lme4` package has no `family=multinomial` option, it cannot model 
 polytomous responses. Fortunately, with the multinomial-Poisson trick, we can analyze polytomous responses
 from repeated measures:
@@ -312,33 +314,35 @@ glmer.mp.con(m7, pairwise ~ X1*X2, adjust="holm")
 ## Mixed factorial 2&times;2 design with polytomous response
 
 This fifth and final example is also the reason that the `multpois` package was created, since we have
-a polytomous response, one between-subjects factor, and one within-subjects factors. This mixed factorial
-design is also known as a split-plot design. 
+a polytomous response, one between-subjects factor, and one within-subjects factor. This mixed factorial
+design is also known as a split-plot design. (Note: Do not confuse mixed factorial designs with mixed-effects
+models. The former contain between- and within-subjects factors; the latter contain fixed and random 
+effects.) 
 
 This fictional data is based on the scenario at the beginning of this vignette. Forty respondents, half
 adults and half children, were surveyed for their favorite ice cream four times, once per season. Thus, 
-`Age` is a between-subjects factor with two levels `{adult, child}` and `Season` is a within-subjects factor 
+`Age` is a between-subjects factor with two levels `{adult, child}`, and `Season` is a within-subjects factor 
 with four levels `{fall, winter, spring, summer}`. The polytomous response, `Pref`, has three categories: 
 `{vanilla, chocolate, strawberry}`. The `PId` factor is repeated across rows, indicating
-respondents were queried four times each.
+respondents were queried four times each, once per season.
 
 Let's load and prepare this data set:
 
 ```{r}
 data(icecream, package="multpois")
 icecream$PId = factor(icecream$PId)
-icecream$Pref = factor(icecream$Pref)
-icecream$Age = factor(icecream$Age)
-icecream$Season = factor(icecream$Season)
+icecream$Pref = factor(icecream$Pref, levels=c("vanilla","chocolate","strawberry"))
+icecream$Age = factor(icecream$Age, levels=c("adult","child"))
+icecream$Season = factor(icecream$Season, levels=c("fall","winter","spring","summer"))
 contrasts(icecream$Age) <- "contr.sum"
 contrasts(icecream$Season) <- "contr.sum"
 ```
 
 Let's visualize this data set using a mosaic plot:
 
-```{r fig.cap="**Figure 5.** Proportions of `chocolate` (brown), `strawberry` (pink), and `vanilla` (beige) responses in eight conditions: `{adult, fall}`, `{adult, spring}`, `{adult, summer}`, `{adult, winter}`, `{child, fall}`, `{child, spring}`, `{child, summer}`, and `{child, winter}`.", fig.height=6, fig.width=7}
+```{r fig.cap="**Figure 5.** Proportions of `vanilla` (beige), `chocolate` (brown), and `strawberry` (pink) responses for adults and children across the four seasons.", fig.height=6, fig.width=7}
 xt = xtabs( ~ Age + Season + Pref, data=icecream)
-mosaicplot(xt, main="Pref by Age, Season", las=1, col=c("tan","pink","beige"))
+mosaicplot(xt, main="Pref by Age, Season", las=1, col=c("beige","tan","pink"))
 ```
 
 As in the previous example, we can use the multinomial-Poisson trick to analyze repeated measures
@@ -352,30 +356,30 @@ Anova.mp(m8, type=3)
 We have a main effect of `Age` and an `Age`&times;`Season` interaction but no main effect of `Season`. We 
 can explore this further by graphically depicting response proportions in each age group:
 
-```{r fig.cap="**Figure 6.** Proportions of `chocolate` (brown), `strawberry` (pink), and `vanilla` (beige) responses for adults and children. The main effect of `Age` emerges, with children preferring chocolate more and strawberry less than adults.", fig.height=6, fig.width=7}
+```{r fig.cap="**Figure 6.** Proportions of `vanilla` (beige), `chocolate` (brown), and `strawberry` (pink) responses for adults and children. The main effect of `Age` emerges, with children preferring chocolate more and strawberry less than adults.", fig.height=6, fig.width=7}
 xt = xtabs( ~ Age + Pref, data=icecream)
-mosaicplot(xt, main="Pref by Age", las=1, col=c("tan","pink","beige"))
+mosaicplot(xt, main="Pref by Age", las=1, col=c("beige","tan","pink"))
 ```
 
 The different proportions by `Age` clearly emerge, explaining the main effect. Let's also graphically depict the proportions by `Season`:
 
-```{r fig.cap="**Figure 7.** Proportions of `chocolate` (brown), `strawberry` (pink), and `vanilla` (beige) responses by season. Although there are some differences in proportion, they are not quite statistically significant (*p* = 0.053).", fig.height=6, fig.width=7}
+```{r fig.cap="**Figure 7.** Proportions of `vanilla` (beige), `chocolate` (brown), and `strawberry` (pink) responses by `Season`. Although there are some differences in proportion, they are not quite statistically significant (*p* = 0.052).", fig.height=6, fig.width=7}
 xt = xtabs( ~ Season + Pref, data=icecream)
-mosaicplot(xt, main="Pref by Season", las=1, col=c("tan","pink","beige"))
+mosaicplot(xt, main="Pref by Season", las=1, col=c("beige","tan","pink"))
 ```
 
 Finally, we can again conduct *post hoc* pairwise comparisons. Note, however, there are many such possible 
 comparisons, and best practice would require us to only conduct those comparisons driven by hypotheses or 
 planned in advance. For example, we might wish to limit our pairwise comparisons to adults vs. children 
-*in each season*, not across all seasons. In any case, we first conduct all pairwise comparisons for 
+*within each season*, not across all seasons. In any case, we first conduct all pairwise comparisons just for 
 illustration:
 
 ```{r message=FALSE, warning=FALSE}
 glmer.mp.con(m8, pairwise ~ Age*Season, adjust="holm")
 ```
 
-If we *did* wish to compare adults *vs.* children in each season (fall, winter, spring, and summer), we would 
-first conduct all pairwise comparisons, leaving them *uncorrected*...
+If we wished to compare adults vs. children in each season (fall, winter, spring, and summer), we would 
+first conduct all pairwise comparisons, leaving them *uncorrected* for multiple comparisons...
 
 ```{r message=FALSE, warning=FALSE}
 glmer.mp.con(m8, pairwise ~ Age*Season, adjust="none")
@@ -388,13 +392,13 @@ p.adjust(c(0.017176, 0.308026, 0.001020, 0.363038), method="holm")
 ```
 
 Thus, after correction using Holm's sequential Bonferroni procedure 
-[(Holm 1979)](https://www.jstor.org/stable/4615733), we see that adults *vs.* children in 
+[(Holm 1979)](https://www.jstor.org/stable/4615733), we see that adults vs. children in 
 **spring** are significantly different (*p* < .05). Looking again at Figure 5 visually
 confirms this result.
 
 
 <center>
 
-Copyright (C) 2024 Jacob O. Wobbrock
+Copyright (C) 2024-2025 Jacob O. Wobbrock &lt;wobbrock@uw.edu&gt;
 
 </center>
