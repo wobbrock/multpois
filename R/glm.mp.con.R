@@ -35,7 +35,8 @@
 #'
 #' Users wishing to verify the correctness of \code{glm.mp.con} should compare its results to
 #' \code{\link[emmeans]{emmeans}} results for models built with \code{\link[stats]{glm}} using
-#' \code{family=binomial} for dichotomous responses. The results should be similar.
+#' \code{family=binomial} for dichotomous responses. Factor contrasts should be set to sum-to-zero
+#' contrasts (i.e., \code{"contr.sum"}).
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
 #' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
@@ -204,18 +205,18 @@ glm.mp.con <- function(
       contrasts(d0[[facname]]) <- "contr.sum"
 
       # create our model formula for this comparison
-      s = paste0(DV, " ~ ", facname, " + alt + ", facname, ":alt")
+      s = paste0(DV, " ~ alt + ", facname, " + alt:", facname)
       f = as.formula(s) # convert to formula
 
       # finally, create our model and examine its effects
       m = glm(formula=f, data=d0, family=poisson, ...) # m-P trick
       a = car::Anova(m, type=3)
-      a = a[grep(":alt", rownames(a), fixed=TRUE),] # get relevant entry
+      a = a[grep("alt:", rownames(a), fixed=TRUE),] # get relevant entry
 
       # improve our row
       rownames(a)[1] = paste0(lvls[i], " - ", lvls[j]) # update contrast label
       colnames(a)[3] = "p.value" # simplify p-value label
-      a = dplyr::mutate(a, .after="Df", "N"=nrow(d0)/length(levels(df$alt))) # insert N
+      a = dplyr::mutate(a, .after="Df", N=nrow(d0)/length(levels(df$alt))) # insert N
 
       # create a new output row entry and add it to our output table
       r = list(Contrast = rownames(a)[1],

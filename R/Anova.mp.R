@@ -34,14 +34,14 @@
 #' Users wishing to verify the correctness of these results can compare \code{\link[car]{Anova}} results
 #' for dichotomous response models built with \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}} (using
 #' \code{family=binomial}) to \code{Anova.mp} results for models built with \code{\link{glm.mp}} or
-#' \code{\link{glmer.mp}}, respectively. The results should generally match, or be very similar.
+#' \code{\link{glmer.mp}}, respectively. The results should be similar.
 #'
 #' Users can also compare \code{\link[car]{Anova}} results for polytomous response models built with
 #' \code{\link[nnet]{multinom}} to \code{Anova.mp} results for models built with \code{\link{glm.mp}}.
-#' Again, the results should generally match, or be very similar.
+#' Again, the results should be similar.
 #'
-#' There is no similarly easy comparison for polytomous response models with repeated measures. The
-#' lack of options was a key motivation for developing \code{\link{glmer.mp}} in the first place.
+#' There is no similarly easy comparison for polytomous response models with repeated measures. This
+#' lack of options was a key motivation for developing \code{\link{glmer.mp}}.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
 #' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
@@ -123,14 +123,14 @@ Anova.mp <- function(model, type=c(3, 2, 1, "III", "II", "I"))
   if (type == 1) # type I ANOVA
   {
     if (any(mtype == "glm")) { # glm.mp
-      a = anova(model, test="Chisq") # anova.glm
+      a = anova(model, test="Chisq")
 
       # insert N for Chisq result
       a = dplyr::mutate(.data=a, .after="Df", "N"=nrow(df)/length(levels(df$alt)))
 
       # extract the rows that are interactions with "alt"
-      a = a[grep(":alt", rownames(a), fixed=TRUE),]
-      rownames(a) = sub(":alt", "", rownames(a), fixed=TRUE)
+      a = a[grep("alt:", rownames(a), fixed=TRUE),]
+      rownames(a) = sub("alt:", "", rownames(a), fixed=TRUE)
 
       # rename the Deviance column to be Chisq and move it first
       colnames(a) = sub("Deviance", "Chisq", colnames(a), fixed=TRUE)
@@ -144,11 +144,11 @@ Anova.mp <- function(model, type=c(3, 2, 1, "III", "II", "I"))
       a[,"Resid. Dev"] = NULL
     }
     else if (lme4::isGLMM(model)) { # glmer.mp
-      a = anova(model, refit=FALSE) # anova.merMod
+      a = anova(model, refit=FALSE)
 
       # extract the rows that are interactions with "alt"
-      a = a[grep(":alt", rownames(a), fixed=TRUE),]
-      rownames(a) = sub(":alt", "", rownames(a), fixed=TRUE)
+      a = a[grep("alt:", rownames(a), fixed=TRUE),]
+      rownames(a) = sub("alt:", "", rownames(a), fixed=TRUE)
 
       # rename the npar column to be Df
       colnames(a) = sub("npar", "Df", colnames(a), fixed=TRUE)
@@ -187,8 +187,8 @@ Anova.mp <- function(model, type=c(3, 2, 1, "III", "II", "I"))
     a = dplyr::mutate(.data=a, .after="Df", "N"=nrow(df)/length(levels(df$alt)))
 
     # extract the rows that are interactions with "alt"
-    a = a[grep(":alt", rownames(a), fixed=TRUE),]
-    rownames(a) = sub(":alt", "", rownames(a), fixed=TRUE)
+    a = a[grep("alt:", rownames(a), fixed=TRUE),]
+    rownames(a) = sub("alt:", "", rownames(a), fixed=TRUE)
 
     # make consistent
     colnames(a)[1] = "Chisq"
@@ -197,4 +197,5 @@ Anova.mp <- function(model, type=c(3, 2, 1, "III", "II", "I"))
   }
   return (a)
 }
+
 

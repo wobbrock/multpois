@@ -29,19 +29,29 @@
 #' @details
 #' This function should be used for nominal response data with repeated measures. In essence, it provides
 #' for the equivalent of \code{\link[lme4]{glmer}} with \code{family=multinomial}, were that option to
-#' exist. (That option does not exist, which was a key motivation for developing this function.)
+#' exist. (That option does not exist, which is a key motivation for developing this function.)
 #'
 #' For polytomous response data with only between-subjects factors, use \code{\link{glm.mp}} or
 #' \code{\link[nnet]{multinom}}.
 #'
 #' Users wishing to verify the correctness of \code{glmer.mp} should compare its \code{\link{Anova.mp}}
 #' results to \code{\link[car]{Anova}} results for models built with \code{\link[lme4]{glmer}} using
-#' \code{family=binomial} for dichotomous responses. The results should generally match, or be very similar.
+#' \code{family=binomial} for dichotomous responses. The results should be similar.
+#'
+#' \emph{Post hoc} pairwise comparisons for factors can be conducted with \code{\link{glmer.mp.con}}.
 #'
 #' @note It is common to receive a \code{boundary (singular) fit} message. This generally can be ignored
 #' provided the test output looks sensible. Less commonly, the procedure can fail to converge, which
 #' can happen when counts of one or more categories are very small or zero in some conditions. In such
 #' cases, any results should be regarded with caution.
+#'
+#' @note Sometimes, convergence issues can be remedied by changing the optimizer or its control parameters.
+#' For example, the following code uses the \code{bobyqa} optimizer instead of the \code{Nelder_Mead} optimizer
+#' and increases the maximum number of function evaluations:
+#'
+#' \code{m = glmer.mp(Y ~ X + (1|PId), data=df, control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=100000)))}
+#'
+#' See \code{\link[lme4]{glmerControl}} for more information.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
 #' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
@@ -99,7 +109,7 @@
 #' @importFrom stats terms
 #' @importFrom stats contrasts
 #' @importFrom stats 'contrasts<-'
-#' @importFrom stats update.formula
+#' @importFrom stats as.formula
 #' @importFrom stats poisson
 #'
 #' @export glmer.mp
@@ -160,15 +170,20 @@ glmer.mp <- function(formula, data, ...)
   # also set the new "alt" factor contrasts
   contrasts(df$alt) <- "contr.sum"
 
-  # add the "alt" factor and ":alt" interactions to only the fixed effects
-  f = formula
-  tlabs = attr(terms(f), "term.labels")
+  # add in "alt"
+  s = paste0(DV, " ~ alt")
+  tlabs = attr(terms(formula), "term.labels")
   for (i in 1:length(tlabs)) {
-    if (!grepl("|", tlabs[i], fixed=TRUE)) {
-      f = update.formula(f, paste0(". ~ . + ", tlabs[i], ":alt"))
+    if (!grepl("|", tlabs[i], fixed=TRUE)) { # fixed factors
+      s = paste0(s, " + ", tlabs[i], " + alt:", tlabs[i])
+    }
+    else { # random factors
+      lhs = trimws(strsplit(tlabs[i], "|", fixed=TRUE)[[1]][1])
+      rhs = trimws(strsplit(tlabs[i], "|", fixed=TRUE)[[1]][2])
+      s = paste0(s, " + (", lhs, " + alt | ", rhs, ")")
     }
   }
-  f = update.formula(f, . ~ . + alt) # add "alt" main effect
+  f = as.formula(s) # convert to formula
 
   # build and return our model
   m = lme4::glmer(formula=f, data=df, family=poisson, ...) # m-P trick

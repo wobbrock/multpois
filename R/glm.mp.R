@@ -34,10 +34,12 @@
 #' For data with repeated measures, use \code{\link{glmer.mp}}, which can take random factors and thus handle
 #' correlated responses.
 #'
-#' Users wishing to verify the correctness of \code{glm.mp} should compare its \code{\link{Anova.mp}} results
+#' Users wishing to verify the correctness of \code{glm.mp} should compare \code{\link{Anova.mp}} results
 #' to \code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using
 #' \code{family=binomial} (for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous
-#' responses). The results should generally match, or be very similar.
+#' responses). The results should be similar.
+#'
+#' \emph{Post hoc} pairwise comparisons for factors can be conducted with \code{\link{glm.mp.con}}.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
 #' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
@@ -93,7 +95,7 @@
 #' @importFrom stats terms
 #' @importFrom stats contrasts
 #' @importFrom stats 'contrasts<-'
-#' @importFrom stats update.formula
+#' @importFrom stats as.formula
 #' @importFrom stats glm
 #' @importFrom stats poisson
 #'
@@ -156,7 +158,12 @@ glm.mp <- function(formula, data, ...)
   contrasts(df$alt) <- "contr.sum"
 
   # create the new formula with the "alt" factor
-  f = update.formula(formula, . ~ . * alt)
+  s = paste0(DV, " ~ alt")
+  tlabs = attr(terms(formula), "term.labels")
+  for (i in 1:length(tlabs)) {
+    s = paste0(s, " + ", tlabs[i], " + alt:", tlabs[i]) # fixed factors
+  }
+  f = as.formula(s) # convert to formula
 
   # build and return our model
   m = glm(formula=f, data=df, family=poisson, ...) # m-P trick
