@@ -1,3 +1,18 @@
+# multpois 0.3.0
+
+Minor changes:
+
+* Fixed glmer.mp and glmer.mp.con to use 'alt' factor as a random slope in mixed-
+  effects models, which brought its results in line with further testing of 
+  lme4::glmer family=binomial.
+* Used factor() in glm.mp.con and glmer.mp.con to reset factor levels of composite 
+  factors made for post hoc pairwise comparisons. This prevents warnings from the
+  formerly unused factor levels being dropped automatically.
+* Minor updates to documentation for functions.
+* Minor updates to vignette for presentation and writing clarity.
+
+
+
 # multpois 0.2.1
 
 Minor changes:
@@ -6,6 +21,7 @@ Minor changes:
   fewer levels in the subsetted table than in the full table. The fix was to update
   any random factors' levels in the subset tables constructed dynamically for pairwise
   comparisons. Any post hoc pairwise comparison calculations remain unchanged.
+
 
 
 # multpois 0.2.0
@@ -21,6 +37,7 @@ Minor changes:
 * Added additional tests for the above.
 * Updated function documentation for the above.
 * Updated BugReports in DESCRIPTION to be https://github.com/wobbrock/multpois/issues
+
 
 
 # multpois 0.1.0
