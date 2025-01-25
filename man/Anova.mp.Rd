@@ -35,14 +35,14 @@ produce an ANOVA-style table with chi-square results. For type I ANOVAs, it uses
 Users wishing to verify the correctness of these results can compare \code{\link[car]{Anova}} results
 for dichotomous response models built with \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}} (using
 \code{family=binomial}) to \code{Anova.mp} results for models built with \code{\link{glm.mp}} or
-\code{\link{glmer.mp}}, respectively. The results should generally match, or be very similar.
+\code{\link{glmer.mp}}, respectively. The results should be similar.
 
 Users can also compare \code{\link[car]{Anova}} results for polytomous response models built with
 \code{\link[nnet]{multinom}} to \code{Anova.mp} results for models built with \code{\link{glm.mp}}.
-Again, the results should generally match, or be very similar.
+Again, the results should be similar.
 
-There is no similarly easy comparison for polytomous response models with repeated measures. The
-lack of options was a key motivation for developing \code{\link{glmer.mp}} in the first place.
+There is no similarly easy comparison for polytomous response models with repeated measures. This
+lack of options was a key motivation for developing \code{\link{glmer.mp}}.
 }
 \examples{
 ## between-subjects factors (X1,X2) with polytomous response (Y)

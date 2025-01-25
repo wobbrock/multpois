@@ -41,7 +41,8 @@ on a subset of the data relevant to each pairwise comparison.
 
 Users wishing to verify the correctness of \code{glm.mp.con} should compare its results to
 \code{\link[emmeans]{emmeans}} results for models built with \code{\link[stats]{glm}} using
-\code{family=binomial} for dichotomous responses. The results should be similar.
+\code{family=binomial} for dichotomous responses. Factor contrasts should be set to sum-to-zero
+contrasts (i.e., \code{"contr.sum"}).
 }
 \examples{
 library(car)

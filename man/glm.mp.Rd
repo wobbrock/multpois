@@ -35,10 +35,12 @@ purpose.)
 For data with repeated measures, use \code{\link{glmer.mp}}, which can take random factors and thus handle
 correlated responses.
 
-Users wishing to verify the correctness of \code{glm.mp} should compare its \code{\link{Anova.mp}} results
+Users wishing to verify the correctness of \code{glm.mp} should compare \code{\link{Anova.mp}} results
 to \code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using
 \code{family=binomial} (for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous
-responses). The results should generally match, or be very similar.
+responses). The results should be similar.
+
+\emph{Post hoc} pairwise comparisons for factors can be conducted with \code{\link{glm.mp.con}}.
 }
 \examples{
 library(car)
