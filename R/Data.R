@@ -145,6 +145,7 @@ NULL
 #'
 #' @keywords datasets
 #' @examples
+#' \donttest{
 #' data(ws3, package="multpois")
 #'
 #' ws3$PId = factor(ws3$PId)
@@ -157,6 +158,7 @@ NULL
 #' m = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws3)
 #' Anova.mp(m, type=3)
 #' glmer.mp.con(m, pairwise ~ X1*X2, adjust="holm")
+#' }
 #'
 NULL
 
@@ -190,6 +192,7 @@ NULL
 #'
 #' @keywords datasets
 #' @examples
+#' \donttest{
 #' data(icecream, package="multpois")
 #'
 #' icecream$PId = factor(icecream$PId)
@@ -202,5 +205,6 @@ NULL
 #' m = glmer.mp(Pref ~ Age*Season + (1|PId), data=icecream)
 #' Anova.mp(m, type=3)
 #' glmer.mp.con(m, pairwise ~ Age*Season, adjust="holm")
+#' }
 #'
 NULL
