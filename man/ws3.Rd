@@ -21,6 +21,7 @@ Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
 Participant identifiers are repeated across rows.
 }
 \examples{
+\donttest{
 data(ws3, package="multpois")
 
 ws3$PId = factor(ws3$PId)
@@ -33,6 +34,7 @@ contrasts(ws3$X2) <- "contr.sum"
 m = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws3)
 Anova.mp(m, type=3)
 glmer.mp.con(m, pairwise ~ X1*X2, adjust="holm")
+}
 
 }
 \seealso{

@@ -82,6 +82,7 @@ m2 = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws2)
 Anova.mp(m2, type=3)
 glmer.mp.con(m2, pairwise ~ X1*X2, adjust="holm") # compare
 
+\donttest{
 ## within-subjects factors (x1,X2) with polytomous response (Y)
 data(ws3, package="multpois")
 
@@ -95,6 +96,7 @@ contrasts(ws3$X2) <- "contr.sum"
 m3 = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws3)
 Anova.mp(m3, type=3)
 glmer.mp.con(m3, pairwise ~ X1*X2, adjust="holm")
+}
 
 }
 \references{

@@ -27,6 +27,7 @@ It also has a \code{PId} column for participant identifier. Each participant ide
 four times, once per season.
 }
 \examples{
+\donttest{
 data(icecream, package="multpois")
 
 icecream$PId = factor(icecream$PId)
@@ -39,6 +40,7 @@ contrasts(icecream$Season) <- "contr.sum"
 m = glmer.mp(Pref ~ Age*Season + (1|PId), data=icecream)
 Anova.mp(m, type=3)
 glmer.mp.con(m, pairwise ~ Age*Season, adjust="holm")
+}
 
 }
 \seealso{
