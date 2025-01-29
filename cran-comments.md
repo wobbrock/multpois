@@ -3,9 +3,7 @@
 0 errors | 0 warnings | 0 notes
 
 
-* This release (0.3.1) is just a patch:
+* This release (0.3.2) is just a patch:
 
-* Updated data and examples to set the levels of responses with "yes", "no", and
-  "maybe" categories so they show in that order. Same for the icecream data to
-  sort by "vanilla", "chocolate", and "strawberry", and seasons to be "fall", 
-  "winter", "spring", and "summer".
+* Added \donttest{} directives around slow-running examples involving the ws3
+  and icecream data sets, and the glmer.mp.con() function.

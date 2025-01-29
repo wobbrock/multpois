@@ -1,3 +1,12 @@
+# multpois 0.3.2
+
+Patch:
+
+* Added \donttest{} directives around slow-running examples involving the ws3
+  and icecream data sets, and the glmer.mp.con() function.
+
+
+
 # multpois 0.3.1
 
 Patch:
