@@ -5,7 +5,7 @@
 ##
 
 #' @title
-#' Build a multinomial-Poisson GLM for nominal response data
+#' Multinomial-Poisson GLM for nominal response data
 #'
 #' @description
 #' This function uses the multinomial-Poisson trick to analyze \strong{nominal response} data using a Poisson
@@ -19,7 +19,7 @@
 #' @param data A data frame in long-format. See the \code{data} entry for \code{\link[stats]{glm}}.
 #'
 #' @param ... Additional arguments to be passed to \code{\link[stats]{glm}}. Generally, these are
-#' unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+#' unnecessary but are provided for advanced users. They must not pass \code{formula}, \code{data},
 #' or \code{family} arguments. See \code{\link[stats]{glm}} for valid arguments.
 #'
 #' @returns A Poisson regression model of type \code{\link[stats]{glm}}. See the return value for
@@ -37,7 +37,7 @@
 #' Users wishing to verify the correctness of \code{glm.mp} should compare \code{\link{Anova.mp}} results
 #' to \code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using
 #' \code{family=binomial} (for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous
-#' responses). The results should be similar.
+#' responses). The results should be similar if not identical.
 #'
 #' \emph{Post hoc} pairwise comparisons for factors can be conducted with \code{\link{glm.mp.con}}.
 #'
@@ -54,13 +54,14 @@
 #'
 #' @author Jacob O. Wobbrock
 #'
-#' @seealso [Anova.mp()], [glm.mp.con()], [glmer.mp()], [glmer.mp.con()], [stats::glm()], [nnet::multinom()]
+#' @seealso [Anova.mp()], [glm.mp.con()], [glmer.mp()], [glmer.mp.con()], [stats::glm()], [stats::glm.control()], [nnet::multinom()]
 #'
 #' @examples
+#' library(multpois)
 #' library(car)
 #' library(nnet)
 #'
-#' ## between-subjects factors (X1,X2) with dichotomous response (Y)
+#' ## two between-subjects factors (X1,X2) with dichotomous response (Y)
 #' data(bs2, package="multpois")
 #'
 #' bs2$PId = factor(bs2$PId)
@@ -76,7 +77,7 @@
 #' m2 = glm.mp(Y ~ X1*X2, data=bs2) # compare
 #' Anova.mp(m2, type=3)
 #'
-#' ## between-subjects factors (X1,X2) with polytomous response (Y)
+#' ## two between-subjects factors (X1,X2) with polytomous response (Y)
 #' data(bs3, package="multpois")
 #'
 #' bs3$PId = factor(bs3$PId)

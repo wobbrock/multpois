@@ -5,20 +5,20 @@
 ##
 
 #' @title
-#' Between-subjects 2&times;2 design with dichotomous response
+#' Between-subjects 2&times;2 design with dichotomous response data
 #'
 #' @description
-#' This generic synthetic dataset has a dichotomous response \code{Y} and two factors
-#' \code{X1} and \code{X2}. The response has categories \code{\{yes,no\}}.
-#' Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
-#' \code{\{c,d\}}. It also has a \code{PId} column for participant identifier.
-#' Each participant is on only one row.
+#' This generic synthetic long-format data set has a dichotomous response \code{Y}
+#' and two factors \code{X1} and \code{X2}. The response has categories
+#' \code{\{yes, no\}}. Factor \code{X1} has levels \code{\{a, b\}}, and factor
+#' \code{X2} has levels \code{\{c, d\}}. It also has a \code{PId} column for a participant
+#' identifier. Each participant appears on only one row.
 #'
 #' @name bs2
 #' @docType data
 #' @format A data frame with 60 observations on the following 4 variables:
 #' \describe{
-#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"40"}}
+#'      \item{PId}{a participant identifier with levels \code{"1"} ... \code{"60"}}
 #'      \item{X1}{a between-subjects factor with levels \code{"a"}, \code{"b"}}
 #'      \item{X2}{a between-subjects factor with levels \code{"c"}, \code{"d"}}
 #'      \item{Y}{a dichotomous response with categories \code{"yes"}, \code{"no"}}
@@ -28,6 +28,7 @@
 #'
 #' @keywords datasets
 #' @examples
+#' library(multpois)
 #' data(bs2, package="multpois")
 #'
 #' bs2$PId = factor(bs2$PId)
@@ -44,29 +45,30 @@
 NULL
 
 #' @title
-#' Between-subjects 2&times;2 design with polytomous response
+#' Between-subjects 2&times;2 design with polytomous response data
 #'
 #' @description
-#' This generic synthetic dataset has a polytomous response \code{Y} and two factors
-#' \code{X1} and \code{X2}. The response has categories \code{\{yes,no,maybe\}}.
-#' Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
-#' \code{\{c,d\}}. It also has a \code{PId} column for participant identifier.
-#' Each participant is on only one row.
+#' This generic synthetic long-format data set has a polytomous response \code{Y}
+#' and two factors \code{X1} and \code{X2}. The response has categories
+#' \code{\{yes, no, maybe\}}. Factor \code{X1} has levels \code{\{a, b\}}, and factor
+#' \code{X2} has levels \code{\{c, d\}}. It also has a \code{PId} column for a participant
+#' identifier. Each participant appears on only one row.
 #'
 #' @name bs3
 #' @docType data
 #' @format A data frame with 60 observations on the following 4 variables:
 #' \describe{
-#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"60"}}
+#'      \item{PId}{a participant identifier with levels \code{"1"} ... \code{"60"}}
 #'      \item{X1}{a between-subjects factor with levels \code{"a"}, \code{"b"}}
 #'      \item{X2}{a between-subjects factor with levels \code{"c"}, \code{"d"}}
-#'      \item{Y}{a polytomous response with categories \code{"yes"}, \code{"no"}, and \code{"maybe"}}
+#'      \item{Y}{a polytomous response with categories \code{"yes"}, \code{"no"}, \code{"maybe"}}
 #' }
 #'
 #' @seealso See \code{\link{glm.mp}} and \code{\link{glm.mp.con}} for complete examples.
 #'
 #' @keywords datasets
 #' @examples
+#' library(multpois)
 #' data(bs3, package="multpois")
 #'
 #' bs3$PId = factor(bs3$PId)
@@ -83,20 +85,20 @@ NULL
 NULL
 
 #' @title
-#' Within-subjects 2&times;2 design with dichotomous response
+#' Within-subjects 2&times;2 design with dichotomous response data
 #'
 #' @description
-#' This generic synthetic dataset has a dichotomous response \code{Y} and two factors
-#' \code{X1} and \code{X2}. The response has categories \code{\{yes,no\}}.
-#' Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
-#' \code{\{c,d\}}. It also has a \code{PId} column for participant identifier.
+#' This generic synthetic long-format data set has a dichotomous response \code{Y}
+#' and two factors \code{X1} and \code{X2}. The response has categories \code{\{yes, no\}}.
+#' Factor \code{X1} has levels \code{\{a, b\}}, and factor \code{X2} has levels
+#' \code{\{c, d\}}. It also has a \code{PId} column for a participant identifier.
 #' Participant identifiers are repeated across rows.
 #'
 #' @name ws2
 #' @docType data
 #' @format A data frame with 60 observations on the following 4 variables:
 #' \describe{
-#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"10"}}
+#'      \item{PId}{a participant identifier with levels \code{"1"} ... \code{"15"}}
 #'      \item{X1}{a within-subjects factor with levels \code{"a"}, \code{"b"}}
 #'      \item{X2}{a within-subjects factor with levels \code{"c"}, \code{"d"}}
 #'      \item{Y}{a dichotomous response with categories \code{"yes"}, \code{"no"}}
@@ -106,6 +108,7 @@ NULL
 #'
 #' @keywords datasets
 #' @examples
+#' library(multpois)
 #' data(ws2, package="multpois")
 #'
 #' ws2$PId = factor(ws2$PId)
@@ -122,20 +125,20 @@ NULL
 NULL
 
 #' @title
-#' Within-subjects 2&times;2 design with polytomous response
+#' Within-subjects 2&times;2 design with polytomous response data
 #'
 #' @description
-#' This generic synthetic dataset has a polytomous response \code{Y} and two factors
-#' \code{X1} and \code{X2}. The response has categories \code{\{yes,no,maybe\}}.
-#' Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
-#' \code{\{c,d\}}. It also has a \code{PId} column for participant identifier.
-#' Participant identifiers are repeated across rows.
+#' This generic synthetic long-format data set has a polytomous response \code{Y}
+#' and two factors \code{X1} and \code{X2}. The response has categories
+#' \code{\{yes, no, maybe\}}. Factor \code{X1} has levels \code{\{a, b\}}, and factor
+#' \code{X2} has levels \code{\{c, d\}}. It also has a \code{PId} column for a
+#' participant identifier. Participant identifiers are repeated across rows.
 #'
 #' @name ws3
 #' @docType data
 #' @format A data frame with 60 observations on the following 4 variables:
 #' \describe{
-#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"15"}}
+#'      \item{PId}{a participant identifier with levels \code{"1"} ... \code{"15"}}
 #'      \item{X1}{a within-subjects factor with levels \code{"a"}, \code{"b"}}
 #'      \item{X2}{a within-subjects factor with levels \code{"c"}, \code{"d"}}
 #'      \item{Y}{a polytomous response with categories \code{"yes"}, \code{"no"}, \code{"maybe"}}
@@ -146,6 +149,7 @@ NULL
 #' @keywords datasets
 #' @examples
 #' \donttest{
+#' library(multpois)
 #' data(ws3, package="multpois")
 #'
 #' ws3$PId = factor(ws3$PId)
@@ -163,26 +167,26 @@ NULL
 NULL
 
 #' @title
-#' Mixed factorial 2&times;2 design with polytomous response
+#' Mixed factorial 2&times;2 design with polytomous response data
 #'
 #' @description
-#' This synthetic dataset represents a survey of 40 respondents about their favorite
-#' ice cream flavor. Twenty of the respondents were adults and 20 were children. They
-#' were queried four times over the course of a year, once in the middle of each season
-#' (fall, winter, spring, summer).
+#' This synthetic long-format data set represents a survey of 40 respondents about their
+#' favorite ice cream flavors. Twenty of the respondents were adults and 20 were children.
+#' They were asked four times over the course of a year, once in the middle of each season
+#' (fall, winter, spring, summer), for their favorite ice cream flavor in that season.
 #'
-#' This dataset has a polytomous response \code{Pref} and two factors,
-#' \code{Age} and \code{Season}. The response has the unordered categories
+#' This data set has a polytomous response \code{Pref} and two factors,
+#' \code{Age} and \code{Season}. The response \code{Pref} has the unordered categories
 #' \code{\{vanilla, chocolate, strawberry\}}. Factor \code{Age} has levels
-#' \code{\{adult, child\}}, and factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
-#' It also has a \code{PId} column for participant identifier. Each participant identifier is repeated
-#' four times, once per season.
+#' \code{\{adult, child\}}. Factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
+#' It also has a \code{PId} column for a participant identifier. Each participant identifier is repeated
+#' four times, once for each season.
 #'
 #' @name icecream
 #' @docType data
 #' @format A data frame with 160 observations on the following 4 variables:
 #' \describe{
-#'      \item{PId}{a subject identifier with levels \code{"1"} ... \code{"40"}}
+#'      \item{PId}{a participant identifier with levels \code{"1"} ... \code{"40"}}
 #'      \item{Age}{a between-subjects factor with levels \code{"adult"}, \code{"child"}}
 #'      \item{Season}{a within-subjects factor with levels \code{"fall"}, \code{"winter"}, \code{"spring"}, \code{"summer"}}
 #'      \item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}}
@@ -193,6 +197,7 @@ NULL
 #' @keywords datasets
 #' @examples
 #' \donttest{
+#' library(multpois)
 #' data(icecream, package="multpois")
 #'
 #' icecream$PId = factor(icecream$PId)

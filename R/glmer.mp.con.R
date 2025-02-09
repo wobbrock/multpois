@@ -5,7 +5,7 @@
 ##
 
 #' @title
-#' Contrast tests for multinomial-Poisson GLMMs
+#' Contrast tests for multinomial-Poisson GLMM
 #'
 #' @description
 #' This function conducts \emph{post hoc} pairwise comparisons on generalized linear mixed models (GLMMs)
@@ -15,15 +15,16 @@
 #' @param model A multinomial-Poisson generalized linear mixed model created by \code{\link{glmer.mp}}.
 #'
 #' @param formula A formula object in the style of, e.g., \code{pairwise ~ X1*X2}, where \code{X1} and
-#' \code{X2} are factors in \code{model}. The \code{pairwise} keyword \strong{must} be used on the left-hand
+#' \code{X2} are factors in \code{model}. The \code{pairwise} keyword \emph{must} be used on the left-hand
 #' side of the formula. See the \code{specs} entry for \code{\link[emmeans]{emmeans}}.
 #'
 #' @param adjust A string indicating the \emph{p}-value adjustment to use. Defaults to \code{"holm"}. See the
-#' Details section for \code{\link[stats]{p.adjust}}.
+#' details for \code{\link[stats]{p.adjust}}.
 #'
-#' @param ... Additional arguments to be passed to \code{\link[lme4]{glmer}}. Generally, these are
-#' unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
-#' or \code{family} arguments. See \code{\link[lme4]{glmer}} for valid arguments.
+#' @param ... Additional arguments to be passed to \code{\link[lme4]{glmer}}. Most often, these additional
+#' arguments are used to specify alternate optimizers. (See \strong{Note}, below.) These additional arguments
+#' must not pass \code{formula}, \code{data}, or \code{family} arguments. See \code{\link[lme4]{glmer}} for
+#' valid arguments.
 #'
 #' @returns Pairwise comparisons for all levels indicated by the factors in \code{formula}.
 #'
@@ -31,25 +32,28 @@
 #' \emph{Post hoc} pairwise comparisons should be conducted \emph{only} after a statistically significant
 #' omnibus test using \code{\link{Anova.mp}}. Comparisons are conducted in the style of
 #' \code{\link[emmeans]{emmeans}} but not using this function; rather, the multinomial-Poisson trick is used
-#' on a subset of the data relevant to each pairwise comparison.
+#' on the subset of the data relevant to each pairwise comparison.
 #'
 #' Users wishing to verify the correctness of \code{glmer.mp.con} should compare its results to
 #' \code{\link[emmeans]{emmeans}} results for models built with \code{\link[lme4]{glmer}} using
 #' \code{family=binomial} for dichotomous responses. Factor contrasts should be set to sum-to-zero
-#' contrasts (i.e., \code{"contr.sum"}).
+#' contrasts (i.e., \code{"contr.sum"}). The results should be similar.
 #'
-#' @note It is common to receive a \code{boundary (singular) fit} message. This generally can be ignored
-#' provided the test output looks sensible. Less commonly, the procedure can fail to converge, which
-#' can happen when counts of one or more categories are very small or zero in some conditions. In such
-#' cases, any results should be regarded with caution.
+#' @note It is not uncommon to receive \code{boundary (singular) fit} messages. These messages can often be
+#' ignored provided the test output looks sensible.
 #'
-#' @note Sometimes, convergence issues can be remedied by changing the optimizer or its control parameters.
-#' For example, the following code uses the \code{bobyqa} optimizer instead of the \code{Nelder_Mead} optimizer
-#' and increases the maximum number of function evaluations:
+#' Sometimes, \code{glmer.mp.con} can fail to converge. Convergence issues
+#' can often be remedied by changing the optimizer or its control parameters. For example, the following code
+#' uses the \code{bobyqa} optimizer and increases the maximum number of function evaluations to 100,000:
 #'
-#' \code{m = glmer.mp.con(m, pairwise ~ X1*X2, adjust="holm", control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=100000)))}
+#' \code{glmer.mp.con(m, pairwise ~ X1*X2, adjust="holm", control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=1e+05)))}
 #'
-#' See \code{\link[lme4]{glmerControl}} for more information.
+#' Other available \code{optimizer} strings besides \code{"bobyqa"} include \code{"nloptwrap"}, \code{"nlminbwrap"},
+#' and \code{"Nelder_Mead"}. Additional optimizers are available via the \code{\link[optimx]{optimx}} library
+#' by passing \code{"optimx"} to \code{optimizer} and \code{method="name"} in the \code{optCtrl} parameter list.
+#' Eligible \emph{name}s include \code{"nlm"}, \code{"BFGS"}, and \code{"L-BFGS-B"}, among others. See the
+#' \code{optimizer} argument in \code{\link[lme4]{glmerControl}} and the details for \code{\link[optimx]{optimx}}
+#' for more information.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
 #' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
@@ -68,15 +72,16 @@
 #'
 #' @author Jacob O. Wobbrock
 #'
-#' @seealso [Anova.mp()], [glmer.mp()], [glm.mp()], [glm.mp.con()], [emmeans::emmeans()]
+#' @seealso [Anova.mp()], [glmer.mp()], [glm.mp()], [glm.mp.con()], [lme4::glmer()], [lme4::glmerControl()], [emmeans::emmeans()]
 #'
 #' @examples
+#' library(multpois)
 #' library(car)
 #' library(lme4)
 #' library(lmerTest)
 #' library(emmeans)
 #'
-#' ## within-subjects factors (x1,X2) with dichotomous response (Y)
+#' ## two within-subjects factors (x1,X2) with dichotomous response (Y)
 #' data(ws2, package="multpois")
 #'
 #' ws2$PId = factor(ws2$PId)
@@ -95,7 +100,7 @@
 #' glmer.mp.con(m2, pairwise ~ X1*X2, adjust="holm") # compare
 #'
 #' \donttest{
-#' ## within-subjects factors (x1,X2) with polytomous response (Y)
+#' ## two within-subjects factors (x1,X2) with polytomous response (Y)
 #' data(ws3, package="multpois")
 #'
 #' ws3$PId = factor(ws3$PId)

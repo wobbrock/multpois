@@ -5,7 +5,7 @@
 ##
 
 #' @title
-#' Build a multinomial-Poisson GLMM for nominal response data
+#' Multinomial-Poisson GLMM for nominal response data
 #'
 #' @description
 #' This function uses the multinomial-Poisson trick to analyze \strong{nominal response} data using a Poisson
@@ -19,9 +19,10 @@
 #'
 #' @param data A data frame in long-format. See the \code{data} entry for \code{\link[lme4]{glmer}}.
 #'
-#' @param ... Additional arguments to be passed to \code{\link[lme4]{glmer}}. Generally, these are
-#' unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
-#' or \code{family} arguments. See \code{\link[lme4]{glmer}} for valid arguments.
+#' @param ... Additional arguments to be passed to \code{\link[lme4]{glmer}}. Most often, these additional
+#' arguments are used to specify alternate optimizers. (See \strong{Note}, below.) These additional arguments
+#' must not pass \code{formula}, \code{data}, or \code{family} arguments. See \code{\link[lme4]{glmer}} for
+#' valid arguments.
 #'
 #' @returns A mixed-effects Poisson regression model of type \code{\link[lme4]{merMod}}, specifically
 #' of \emph{subclass} \code{glmerMod}. See the return value for \code{\link[lme4]{glmer}}.
@@ -29,7 +30,7 @@
 #' @details
 #' This function should be used for nominal response data with repeated measures. In essence, it provides
 #' for the equivalent of \code{\link[lme4]{glmer}} with \code{family=multinomial}, were that option to
-#' exist. (That option does not exist, which is a key motivation for developing this function.)
+#' exist. (That option does not exist, which was a key motivation for developing this function.)
 #'
 #' For polytomous response data with only between-subjects factors, use \code{\link{glm.mp}} or
 #' \code{\link[nnet]{multinom}}.
@@ -40,18 +41,21 @@
 #'
 #' \emph{Post hoc} pairwise comparisons for factors can be conducted with \code{\link{glmer.mp.con}}.
 #'
-#' @note It is common to receive a \code{boundary (singular) fit} message. This generally can be ignored
-#' provided the test output looks sensible. Less commonly, the procedure can fail to converge, which
-#' can happen when counts of one or more categories are very small or zero in some conditions. In such
-#' cases, any results should be regarded with caution.
+#' @note It is not uncommon to receive a \code{boundary (singular) fit} message. This message can often be
+#' ignored provided the test output looks sensible.
 #'
-#' @note Sometimes, convergence issues can be remedied by changing the optimizer or its control parameters.
-#' For example, the following code uses the \code{bobyqa} optimizer instead of the \code{Nelder_Mead} optimizer
-#' and increases the maximum number of function evaluations:
+#' Sometimes, \code{glmer.mp} can fail to converge. Convergence issues
+#' can often be remedied by changing the optimizer or its control parameters. For example, the following code
+#' uses the \code{bobyqa} optimizer and increases the maximum number of function evaluations to 100,000:
 #'
-#' \code{m = glmer.mp(Y ~ X + (1|PId), data=df, control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=100000)))}
+#' \code{m = glmer.mp(Y ~ X + (1|PId), data=df, control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=1e+05)))}
 #'
-#' See \code{\link[lme4]{glmerControl}} for more information.
+#' Other available \code{optimizer} strings besides \code{"bobyqa"} include \code{"nloptwrap"}, \code{"nlminbwrap"},
+#' and \code{"Nelder_Mead"}. Additional optimizers are available via the \code{\link[optimx]{optimx}} library
+#' by passing \code{"optimx"} to \code{optimizer} and \code{method="name"} in the \code{optCtrl} parameter list.
+#' Eligible \emph{name}s include \code{"nlm"}, \code{"BFGS"}, and \code{"L-BFGS-B"}, among others. See the
+#' \code{optimizer} argument in \code{\link[lme4]{glmerControl}} and the details for \code{\link[optimx]{optimx}}
+#' for more information.
 #'
 #' @references Baker, S.G. (1994). The multinomial-Poisson transformation.
 #' \emph{The Statistician 43} (4), pp. 495-504. \doi{10.2307/2348134}
@@ -70,14 +74,15 @@
 #'
 #' @author Jacob O. Wobbrock
 #'
-#' @seealso [Anova.mp()], [glmer.mp.con()], [glm.mp()], [glm.mp.con()], [lme4::glmer()]
+#' @seealso [Anova.mp()], [glmer.mp.con()], [glm.mp()], [glm.mp.con()], [lme4::glmer()], [lme4::glmerControl()]
 #'
 #' @examples
+#' library(multpois)
 #' library(car)
 #' library(lme4)
 #' library(lmerTest)
 #'
-#' ## within-subjects factors (x1,X2) with dichotomous response (Y)
+#' ## two within-subjects factors (x1,X2) with dichotomous response (Y)
 #' data(ws2, package="multpois")
 #'
 #' ws2$PId = factor(ws2$PId)
@@ -93,7 +98,7 @@
 #' m2 = glmer.mp(Y ~ X1*X2 + (1|PId), data=ws2) # compare
 #' Anova.mp(m2, type=3)
 #'
-#' ## within-subjects factors (x1,X2) with polytomous response (Y)
+#' ## two within-subjects factors (x1,X2) with polytomous response (Y)
 #' data(ws3, package="multpois")
 #'
 #' ws3$PId = factor(ws3$PId)
