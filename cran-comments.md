@@ -3,7 +3,9 @@
 0 errors | 0 warnings | 0 notes
 
 
-* This release (0.3.2) is just a patch:
+This release (0.3.3) is just a patch:
 
-* Added \donttest{} directives around slow-running examples involving the ws3
-  and icecream data sets, and the glmer.mp.con() function.
+* Updated documentation only:
+    o More detail on optimizer options for glmer.mp and glmer.mp.con
+    o Improved examples for clarity
+    o Minor writing improvements for clarity and consistency

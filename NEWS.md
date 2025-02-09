@@ -1,3 +1,14 @@
+# multpois 0.3.3
+
+Patch:
+
+* Updated documentation only:
+    o More detail on optimizer options for glmer.mp and glmer.mp.con
+    o Improved examples for clarity
+    o Minor writing improvements for clarity and consistency
+
+
+
 # multpois 0.3.2
 
 Patch:

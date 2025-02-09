@@ -1,6 +1,6 @@
 Package: multpois
 Title: Analyze Nominal Response Data with the Multinomial-Poisson Trick
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: 
     person("Jacob O.", "Wobbrock", , "wobbrock@uw.edu", role = c("aut", "cre","cph"),
            comment = c(ORCID = "0000-0003-3675-5491"))
@@ -17,7 +17,7 @@ Description: Dichotomous responses having two categories can be analyzed
     as per Baker (1994) <doi:10.2307/2348134>. Omnibus analyses of variance can be 
     run along with post hoc pairwise comparisons. For users wishing to analyze nominal 
     responses from surveys or experiments, the functions in this package essentially 
-    act as though stats::glm() or lme4::glmer() had a family=multinomial option.
+    act as though stats::glm() or lme4::glmer() provide a family=multinomial option.
 License: GPL (>= 2)
 URL: https://github.com/wobbrock/multpois/
 BugReports: https://github.com/wobbrock/multpois/issues
