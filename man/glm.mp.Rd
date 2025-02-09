@@ -2,7 +2,7 @@
 % Please edit documentation in R/glm.mp.R
 \name{glm.mp}
 \alias{glm.mp}
-\title{Build a multinomial-Poisson GLM for nominal response data}
+\title{Multinomial-Poisson GLM for nominal response data}
 \usage{
 glm.mp(formula, data, ...)
 }
@@ -14,7 +14,7 @@ entry for \code{\link[stats]{glm}}.}
 \item{data}{A data frame in long-format. See the \code{data} entry for \code{\link[stats]{glm}}.}
 
 \item{...}{Additional arguments to be passed to \code{\link[stats]{glm}}. Generally, these are
-unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+unnecessary but are provided for advanced users. They must not pass \code{formula}, \code{data},
 or \code{family} arguments. See \code{\link[stats]{glm}} for valid arguments.}
 }
 \value{
@@ -38,15 +38,16 @@ correlated responses.
 Users wishing to verify the correctness of \code{glm.mp} should compare \code{\link{Anova.mp}} results
 to \code{\link[car]{Anova}} results for models built with \code{\link[stats]{glm}} using
 \code{family=binomial} (for dichotomous responses) or \code{\link[nnet]{multinom}} (for polytomous
-responses). The results should be similar.
+responses). The results should be similar if not identical.
 
 \emph{Post hoc} pairwise comparisons for factors can be conducted with \code{\link{glm.mp.con}}.
 }
 \examples{
+library(multpois)
 library(car)
 library(nnet)
 
-## between-subjects factors (X1,X2) with dichotomous response (Y)
+## two between-subjects factors (X1,X2) with dichotomous response (Y)
 data(bs2, package="multpois")
 
 bs2$PId = factor(bs2$PId)
@@ -62,7 +63,7 @@ Anova(m1, type=3)
 m2 = glm.mp(Y ~ X1*X2, data=bs2) # compare
 Anova.mp(m2, type=3)
 
-## between-subjects factors (X1,X2) with polytomous response (Y)
+## two between-subjects factors (X1,X2) with polytomous response (Y)
 data(bs3, package="multpois")
 
 bs3$PId = factor(bs3$PId)
@@ -92,7 +93,7 @@ trick” and its extensions for fitting multinomial regression models. \emph{arX
 preprint} available at \doi{10.48550/arXiv.1707.08538}
 }
 \seealso{
-\code{\link[=Anova.mp]{Anova.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[nnet:multinom]{nnet::multinom()}}
+\code{\link[=Anova.mp]{Anova.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[stats:glm.control]{stats::glm.control()}}, \code{\link[nnet:multinom]{nnet::multinom()}}
 }
 \author{
 Jacob O. Wobbrock

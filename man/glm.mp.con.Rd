@@ -2,7 +2,7 @@
 % Please edit documentation in R/glm.mp.con.R
 \name{glm.mp.con}
 \alias{glm.mp.con}
-\title{Contrast tests for multinomial-Poisson GLMs}
+\title{Contrast tests for multinomial-Poisson GLM}
 \usage{
 glm.mp.con(
   model,
@@ -15,14 +15,14 @@ glm.mp.con(
 \item{model}{A multinomial-Poisson generalized linear model created by \code{\link{glm.mp}}.}
 
 \item{formula}{A formula object in the style of, e.g., \code{pairwise ~ X1*X2}, where \code{X1} and
-\code{X2} are factors in \code{model}. The \code{pairwise} keyword \strong{must} be used on the left-hand
+\code{X2} are factors in \code{model}. The \code{pairwise} keyword \emph{must} be used on the left-hand
 side of the formula. See the \code{specs} entry for \code{\link[emmeans]{emmeans}}.}
 
 \item{adjust}{A string indicating the \emph{p}-value adjustment to use. Defaults to \code{"holm"}. See the
-Details section for \code{\link[stats]{p.adjust}}.}
+details for \code{\link[stats]{p.adjust}}.}
 
 \item{...}{Additional arguments to be passed to \code{\link[stats]{glm}}. Generally, these are
-unnecessary but are provided for advanced users. They should not specify \code{formula}, \code{data},
+unnecessary but are provided for advanced users. They must not pass \code{formula}, \code{data},
 or \code{family} arguments. See \code{\link[stats]{glm}} for valid arguments.}
 }
 \value{
@@ -37,19 +37,20 @@ unordered categories.
 \emph{Post hoc} pairwise comparisons should be conducted \emph{only} after a statistically significant
 omnibus test using \code{\link{Anova.mp}}. Comparisons are conducted in the style of
 \code{\link[emmeans]{emmeans}} but not using this function; rather, the multinomial-Poisson trick is used
-on a subset of the data relevant to each pairwise comparison.
+on the subset of the data relevant to each pairwise comparison.
 
 Users wishing to verify the correctness of \code{glm.mp.con} should compare its results to
 \code{\link[emmeans]{emmeans}} results for models built with \code{\link[stats]{glm}} using
 \code{family=binomial} for dichotomous responses. Factor contrasts should be set to sum-to-zero
-contrasts (i.e., \code{"contr.sum"}).
+contrasts (i.e., \code{"contr.sum"}). The results should be similar.
 }
 \examples{
+library(multpois)
 library(car)
 library(nnet)
 library(emmeans)
 
-## between-subjects factors (X1,X2) with dichotomous response (Y)
+## two between-subjects factors (X1,X2) with dichotomous response (Y)
 data(bs2, package="multpois")
 
 bs2$PId = factor(bs2$PId)
@@ -67,7 +68,7 @@ m2 = glm.mp(Y ~ X1*X2, data=bs2)
 Anova.mp(m2, type=3)
 glm.mp.con(m2, pairwise ~ X1*X2, adjust="holm") # compare
 
-## between-subjects factors (X1,X2) with polytomous response (Y)
+## two between-subjects factors (X1,X2) with polytomous response (Y)
 data(bs3, package="multpois")
 
 bs3$PId = factor(bs3$PId)
@@ -79,9 +80,10 @@ contrasts(bs3$X2) <- "contr.sum"
 
 m3 = multinom(Y ~ X1*X2, data=bs3, trace=FALSE)
 Anova(m3, type=3)
-e0 = emmeans(m3, ~ X1*X2 | Y, mode="latent")
-c0 = contrast(e0, method="pairwise", ref=1)
-test(c0, joint=TRUE, by="contrast")
+emmeans::test(
+  contrast(emmeans(m3, ~ X1*X2 | Y, mode="latent"), method="pairwise", ref=1),
+  joint=TRUE, by="contrast"
+)
 
 m4 = glm.mp(Y ~ X1*X2, data=bs3)
 Anova.mp(m4, type=3)
@@ -101,7 +103,7 @@ trick” and its extensions for fitting multinomial regression models. \emph{arX
 preprint} available at \doi{10.48550/arXiv.1707.08538}
 }
 \seealso{
-\code{\link[=Anova.mp]{Anova.mp()}}, \code{\link[=glm.mp]{glm.mp()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[emmeans:emmeans]{emmeans::emmeans()}}
+\code{\link[=Anova.mp]{Anova.mp()}}, \code{\link[=glm.mp]{glm.mp()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[stats:glm.control]{stats::glm.control()}}, \code{\link[emmeans:emmeans]{emmeans::emmeans()}}
 }
 \author{
 Jacob O. Wobbrock

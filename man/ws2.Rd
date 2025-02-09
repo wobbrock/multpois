@@ -3,24 +3,25 @@
 \docType{data}
 \name{ws2}
 \alias{ws2}
-\title{Within-subjects 2×2 design with dichotomous response}
+\title{Within-subjects 2×2 design with dichotomous response data}
 \format{
 A data frame with 60 observations on the following 4 variables:
 \describe{
-\item{PId}{a subject identifier with levels \code{"1"} ... \code{"10"}}
+\item{PId}{a participant identifier with levels \code{"1"} ... \code{"15"}}
 \item{X1}{a within-subjects factor with levels \code{"a"}, \code{"b"}}
 \item{X2}{a within-subjects factor with levels \code{"c"}, \code{"d"}}
 \item{Y}{a dichotomous response with categories \code{"yes"}, \code{"no"}}
 }
 }
 \description{
-This generic synthetic dataset has a dichotomous response \code{Y} and two factors
-\code{X1} and \code{X2}. The response has categories \code{\{yes,no\}}.
-Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
-\code{\{c,d\}}. It also has a \code{PId} column for participant identifier.
+This generic synthetic long-format data set has a dichotomous response \code{Y}
+and two factors \code{X1} and \code{X2}. The response has categories \code{\{yes, no\}}.
+Factor \code{X1} has levels \code{\{a, b\}}, and factor \code{X2} has levels
+\code{\{c, d\}}. It also has a \code{PId} column for a participant identifier.
 Participant identifiers are repeated across rows.
 }
 \examples{
+library(multpois)
 data(ws2, package="multpois")
 
 ws2$PId = factor(ws2$PId)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Anova.mp.R
 \name{Anova.mp}
 \alias{Anova.mp}
-\title{Get ANOVA-style results for a multinomial-Poisson model}
+\title{ANOVA-style results for a multinomial-Poisson model}
 \usage{
 Anova.mp(model, type = c(3, 2, 1, "III", "II", "I"))
 }
@@ -11,11 +11,11 @@ Anova.mp(model, type = c(3, 2, 1, "III", "II", "I"))
 will have been built by \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}}, with
 \code{family=poisson}.)}
 
-\item{type}{In the case of a type II or type III ANOVA, this value will be the \code{type} parameter
-passed to \code{\link[car]{Anova}}. In the case of a type I ANOVA, for models built with
+\item{type}{In the case of a Type II or Type III ANOVA, this value will be the \code{type} parameter
+passed to \code{\link[car]{Anova}}. In the case of a Type I ANOVA, for models built with
 \code{\link{glm.mp}}, the \code{\link[stats]{anova.glm}} function will be called; for models built with
 \code{\link{glmer.mp}}, the \code{\link[lme4]{anova.merMod}} function will be called.
-The default is type 3. See the Details section for \code{\link[car]{Anova}}.}
+The default is 3. See the details for \code{\link[car]{Anova}}.}
 }
 \value{
 An ANOVA-style table of chi-square results for models built by \code{\link{glm.mp}} or
@@ -28,9 +28,9 @@ The output table contains chi-square results for the main effects and interactio
 the given model.
 }
 \details{
-For type II or III ANOVAs, the \code{Anova.mp} function uses \code{\link[car]{Anova}} behind the scenes to
-produce an ANOVA-style table with chi-square results. For type I ANOVAs, it uses
-\code{\link[stats]{anova.glm}} or \code{\link[lme4]{anova.merMod}}.
+For Type II or III ANOVAs, the \code{Anova.mp} function uses \code{\link[car]{Anova}} behind the scenes to
+produce an ANOVA-style table with chi-square results. For Type I ANOVAs, it uses
+\code{\link[stats]{anova.glm}} or \code{\link[lme4]{anova.merMod}}, depending on the model.
 
 Users wishing to verify the correctness of these results can compare \code{\link[car]{Anova}} results
 for dichotomous response models built with \code{\link[stats]{glm}} or \code{\link[lme4]{glmer}} (using
@@ -41,11 +41,13 @@ Users can also compare \code{\link[car]{Anova}} results for polytomous response 
 \code{\link[nnet]{multinom}} to \code{Anova.mp} results for models built with \code{\link{glm.mp}}.
 Again, the results should be similar.
 
-There is no similarly easy comparison for polytomous response models with repeated measures. This
-lack of options was a key motivation for developing \code{\link{glmer.mp}}.
+To date, there is no similarly easy comparison for polytomous response models with repeated measures.
+This lack of options was a key motivation for developing \code{\link{glmer.mp}} in the first place.
 }
 \examples{
-## between-subjects factors (X1,X2) with polytomous response (Y)
+library(multpois)
+
+## two between-subjects factors (X1,X2) with polytomous response (Y)
 data(bs3, package="multpois")
 
 bs3$PId = factor(bs3$PId)
@@ -58,7 +60,7 @@ contrasts(bs3$X2) <- "contr.sum"
 m1 = glm.mp(Y ~ X1*X2, data=bs3)
 Anova.mp(m1, type=3)
 
-## within-subjects factors (X1,X2) with polytomous response (Y)
+## two within-subjects factors (X1,X2) with polytomous response (Y)
 data(ws3, package="multpois")
 
 ws3$PId = factor(ws3$PId)
@@ -89,7 +91,7 @@ trick” and its extensions for fitting multinomial regression models. \emph{arX
 preprint} available at \doi{10.48550/arXiv.1707.08538}
 }
 \seealso{
-\code{\link[=glm.mp]{glm.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[car:Anova]{car::Anova()}}
+\code{\link[=glm.mp]{glm.mp()}}, \code{\link[=glm.mp.con]{glm.mp.con()}}, \code{\link[=glmer.mp]{glmer.mp()}}, \code{\link[=glmer.mp.con]{glmer.mp.con()}}, \code{\link[car:Anova]{car::Anova()}}, \code{\link[stats:anova.glm]{stats::anova.glm()}}, \code{\link[lme4:merMod-class]{lme4::anova.merMod()}}
 }
 \author{
 Jacob O. Wobbrock

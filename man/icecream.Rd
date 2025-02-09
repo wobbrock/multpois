@@ -3,31 +3,32 @@
 \docType{data}
 \name{icecream}
 \alias{icecream}
-\title{Mixed factorial 2×2 design with polytomous response}
+\title{Mixed factorial 2×2 design with polytomous response data}
 \format{
 A data frame with 160 observations on the following 4 variables:
 \describe{
-\item{PId}{a subject identifier with levels \code{"1"} ... \code{"40"}}
+\item{PId}{a participant identifier with levels \code{"1"} ... \code{"40"}}
 \item{Age}{a between-subjects factor with levels \code{"adult"}, \code{"child"}}
 \item{Season}{a within-subjects factor with levels \code{"fall"}, \code{"winter"}, \code{"spring"}, \code{"summer"}}
 \item{Pref}{a polytomous response with categories \code{"vanilla"}, \code{"chocolate"}, \code{"strawberry"}}
 }
 }
 \description{
-This synthetic dataset represents a survey of 40 respondents about their favorite
-ice cream flavor. Twenty of the respondents were adults and 20 were children. They
-were queried four times over the course of a year, once in the middle of each season
-(fall, winter, spring, summer).
+This synthetic long-format data set represents a survey of 40 respondents about their
+favorite ice cream flavors. Twenty of the respondents were adults and 20 were children.
+They were asked four times over the course of a year, once in the middle of each season
+(fall, winter, spring, summer), for their favorite ice cream flavor in that season.
 
-This dataset has a polytomous response \code{Pref} and two factors,
-\code{Age} and \code{Season}. The response has the unordered categories
+This data set has a polytomous response \code{Pref} and two factors,
+\code{Age} and \code{Season}. The response \code{Pref} has the unordered categories
 \code{\{vanilla, chocolate, strawberry\}}. Factor \code{Age} has levels
-\code{\{adult, child\}}, and factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
-It also has a \code{PId} column for participant identifier. Each participant identifier is repeated
-four times, once per season.
+\code{\{adult, child\}}. Factor \code{Season} has levels \code{\{fall, winter, spring, summer\}}.
+It also has a \code{PId} column for a participant identifier. Each participant identifier is repeated
+four times, once for each season.
 }
 \examples{
 \donttest{
+library(multpois)
 data(icecream, package="multpois")
 
 icecream$PId = factor(icecream$PId)

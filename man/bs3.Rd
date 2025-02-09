@@ -3,24 +3,25 @@
 \docType{data}
 \name{bs3}
 \alias{bs3}
-\title{Between-subjects 2×2 design with polytomous response}
+\title{Between-subjects 2×2 design with polytomous response data}
 \format{
 A data frame with 60 observations on the following 4 variables:
 \describe{
-\item{PId}{a subject identifier with levels \code{"1"} ... \code{"60"}}
+\item{PId}{a participant identifier with levels \code{"1"} ... \code{"60"}}
 \item{X1}{a between-subjects factor with levels \code{"a"}, \code{"b"}}
 \item{X2}{a between-subjects factor with levels \code{"c"}, \code{"d"}}
-\item{Y}{a polytomous response with categories \code{"yes"}, \code{"no"}, and \code{"maybe"}}
+\item{Y}{a polytomous response with categories \code{"yes"}, \code{"no"}, \code{"maybe"}}
 }
 }
 \description{
-This generic synthetic dataset has a polytomous response \code{Y} and two factors
-\code{X1} and \code{X2}. The response has categories \code{\{yes,no,maybe\}}.
-Factor \code{X1} has levels \code{\{a,b\}}, and factor \code{X2} has levels
-\code{\{c,d\}}. It also has a \code{PId} column for participant identifier.
-Each participant is on only one row.
+This generic synthetic long-format data set has a polytomous response \code{Y}
+and two factors \code{X1} and \code{X2}. The response has categories
+\code{\{yes, no, maybe\}}. Factor \code{X1} has levels \code{\{a, b\}}, and factor
+\code{X2} has levels \code{\{c, d\}}. It also has a \code{PId} column for a participant
+identifier. Each participant appears on only one row.
 }
 \examples{
+library(multpois)
 data(bs3, package="multpois")
 
 bs3$PId = factor(bs3$PId)
