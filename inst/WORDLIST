@@ -1,7 +1,6 @@
 Anova
 Bonferroni
 BugReports
-doi
 GLMM
 GLMMs
 Guimaraes
@@ -14,6 +13,8 @@ Stata
 al
 arXiv
 bs
+doi
+donttest
 et
 glm
 glmer
@@ -24,10 +25,8 @@ lightyellow
 lme
 mosaicplot
 multinom
-multinomial
-Multinomial
 nnet
-polytomous
+optimizers
 preprint
 ws
 xt
